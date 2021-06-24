@@ -1,5 +1,5 @@
 import { MarkdownPostProcessorContext } from 'obsidian';
-import { AmazingMarvinTask, Query } from './@types';
+import { Category, Query, Task } from './@types';
 import utils from './utils';
 
 const base = 'https://serv.amazingmarvin.com/api';
@@ -34,7 +34,7 @@ class AmazingMarvinApi {
    * @return {(Promise<any | undefined>)}
    * @memberof AmazingMarvinApi
    */
-  private async get(api: string, dataType = 'Tasks'): Promise<any | undefined> {
+  async get(api: string, dataType?: string): Promise<any | undefined> {
     const response = await fetch(`${base}/${api}`, {
       method: 'GET',
       headers: {
@@ -42,70 +42,95 @@ class AmazingMarvinApi {
       },
     });
     if (!response.ok) return;
-    const results = await response.json();
-    console.log(results);
+    let data = await response.json();
 
-    if (dataType) {
-      switch (dataType.toLowerCase()) {
-        case 'task':
-        case 'tasks':
-          return this.getTasks(results);
-        default:
-          return results;
-      }
+    switch (dataType?.toLowerCase()) {
+      case 'task':
+      case 'tasks':
+        data = this.getTasks(data);
+      default:
+        break;
     }
+    return data;
+  }
+
+  /**
+   * @return {any[]}
+   * @memberof AmazingMarvinApi
+   */
+  async getCategories(): Promise<Category[]> {
+    const results = await this.get('categories');
+    return results as Category[];
   }
 
   /**
    * @private
    * @param {any[]} results
-   * @return {AmazingMarvinTask[]}
+   * @return {Task[]}
    * @memberof AmazingMarvinApi
    */
-  private getTasks = (results: any[]): AmazingMarvinTask[] => {
+  private getTasks = (results: any[]): Task[] => {
     return results.filter(result => result.db === 'Tasks');
   };
 
   /**
    * @param {HTMLElement} el
+   * @param {Query} query
+   * @param {string} api
+   * @return {Promise<void>}
    * @memberof AmazingMarvinApi
    */
-  async renderTodayTasks(el: HTMLElement): Promise<void> {
-    let tasks;
-    if (!(tasks = await this.get('todayItems'))) return;
+  async renderTasks(el: HTMLElement, query: Query, api: string): Promise<void> {
+    const [tasks, categories] = await Promise.all([this.get(api), this.getCategories()]);
+    if (!tasks) return;
+    const categoriesMap: Record<string, Category> = categories.reduce(
+      (map, category) => ({ ...map, [category._id]: category }),
+      {}
+    );
+    const unassigned: Task[] = [];
+    tasks.forEach((task: Task) => {
+      if (task.parentId in categoriesMap) {
+        categoriesMap[task.parentId].tasks = categoriesMap[task.parentId].tasks || [];
+        categoriesMap[task.parentId].tasks.push(task);
+      } else {
+        unassigned.push(task);
+      }
+    });
+    const categoriesTree = utils.toTree(categories);
     el.innerText = '';
 
     const container = el.createDiv();
     container.className = 'amazing-marvin-container';
 
-    container.createEl('p', { text: 'Scheduled for today:' });
+    container.createEl('p', { text: query.title || query.type || 'Tasks' });
 
     const ul = container.createEl('ul');
-    tasks.forEach((task: AmazingMarvinTask) => {
-      const item = ul.createEl('li');
-      item.appendChild(utils.convertHyperlinks(task.title));
-    });
+    const items = [...categoriesTree, ...unassigned];
+    this._renderTasks(ul, items, query);
   }
 
   /**
+   * @private
    * @param {HTMLElement} el
+   * @param {(Task | Category)[]} items
+   * @param {Query} query
    * @memberof AmazingMarvinApi
    */
-  async renderDueTodayTasks(el: HTMLElement): Promise<void> {
-    let tasks;
-    if (!(tasks = await this.get('dueItems'))) return;
-    el.innerText = '';
-
-    const container = el.createDiv();
-
-    container.className = 'amazing-marvin-container';
-
-    container.createEl('p', { text: 'Due today:' });
-
-    const ul = container.createEl('ul');
-    tasks.forEach((task: AmazingMarvinTask) => {
-      const item = ul.createEl('li');
-      item.appendChild(utils.convertHyperlinks(task.title));
+  _renderTasks(el: HTMLElement, items: any[], query: Query): void {
+    items.forEach(item => {
+      const listItem = el.createEl('li');
+      listItem.appendChild(utils.convertHyperlinks(item.title));
+      let note;
+      if (query.showNote && item.note && (note = utils.getNote(item.note))) {
+        const blockquote = listItem.createEl('blockquote');
+        blockquote.appendChild(utils.convertHyperlinks(note));
+        listItem.appendChild(blockquote);
+      }
+      const children = item.children?.length > 0 ? item.children : item.tasks;
+      if (children?.length > 0) {
+        const innerUl = listItem.createEl('ul');
+        this._renderTasks(innerUl, children, query);
+      }
     });
   }
 
@@ -124,10 +149,10 @@ class AmazingMarvinApi {
         el.innerText = 'Fetching data from Amazing Marvin ...';
         switch (query.type) {
           case 'today':
-            await this.renderTodayTasks(el);
+            await this.renderTasks(el, query, 'todayItems');
             break;
           case 'due-today':
-            await this.renderDueTodayTasks(el);
+            await this.renderTasks(el, query, 'dueItems');
             break;
           default:
             el.innerText = '[Amazing Marvin Plugin] Unknown config';
