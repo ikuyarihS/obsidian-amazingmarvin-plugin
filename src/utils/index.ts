@@ -32,17 +32,13 @@ const utils = {
   },
 
   toTree(data: any[]): any[] {
-    const map: Record<string, number> = {};
-
-    data.forEach((item, index) => {
-      map[item._id] = index;
-      item.children = [];
-    });
+    const map: any = data.reduce((obj, item) => ({ ...obj, [item._id]: item }), {});
 
     const tree: any[] = [];
     data.forEach(item => {
       if (item.parentId in map) {
-        item.children.push(item);
+        map[item.parentId].children = map[item.parentId].children || [];
+        map[item.parentId].children.push(item);
       } else {
         tree.push(item);
       }

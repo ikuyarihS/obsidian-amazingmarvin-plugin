@@ -106,7 +106,7 @@ class AmazingMarvinApi {
 
     const ul = container.createEl('ul');
     const items = [...categoriesTree, ...unassignedTasks];
-    this._renderTasks(ul, items, query);
+    this._render(ul, items, query);
   }
 
   /**
@@ -116,7 +116,7 @@ class AmazingMarvinApi {
    * @param {Query} query
    * @memberof AmazingMarvinApi
    */
-  _renderTasks(el: HTMLElement, items: any[], query: Query): void {
+  _render(el: HTMLElement, items: any[], query: Query): void {
     items.forEach(item => {
       const listItem = el.createEl('li');
       const title = utils.convertHyperlinks(item.title);
@@ -131,7 +131,7 @@ class AmazingMarvinApi {
       const children = item.children?.length > 0 ? item.children : item.tasks;
       if (children?.length > 0) {
         const innerUl = listItem.createEl('ul');
-        this._renderTasks(innerUl, children, query);
+        this._render(innerUl, children, query);
       }
     });
   }
