@@ -87,13 +87,13 @@ class AmazingMarvinApi {
       (map, category) => ({ ...map, [category._id]: category }),
       {}
     );
-    const unassigned: Task[] = [];
+    const unassignedTasks: any[] = [];
     tasks.forEach((task: Task) => {
       if (task.parentId in categoriesMap) {
         categoriesMap[task.parentId].tasks = categoriesMap[task.parentId].tasks || [];
         categoriesMap[task.parentId].tasks.push(task);
       } else {
-        unassigned.push(task);
+        unassignedTasks.push(task);
       }
     });
     const categoriesTree = utils.toTree(categories);
@@ -105,7 +105,7 @@ class AmazingMarvinApi {
     container.createEl('h3', { text: query.title || query.type || 'Tasks' });
 
     const ul = container.createEl('ul');
-    const items = [...categoriesTree, ...unassigned];
+    const items = [...categoriesTree, ...unassignedTasks];
     this._renderTasks(ul, items, query);
   }
 
@@ -119,7 +119,9 @@ class AmazingMarvinApi {
   _renderTasks(el: HTMLElement, items: any[], query: Query): void {
     items.forEach(item => {
       const listItem = el.createEl('li');
-      listItem.appendChild(utils.convertHyperlinks(item.title));
+      const title = utils.convertHyperlinks(item.title);
+      if (item.color) title.style.color = item.color;
+      listItem.appendChild(title);
       let note;
       if (query.showNote && item.note && (note = utils.getNote(item.note))) {
         const blockquote = listItem.createEl('blockquote');

@@ -35,13 +35,13 @@ const utils = {
     const map: Record<string, number> = {};
 
     data.forEach((item, index) => {
-      map[item.parentId] = index;
+      map[item._id] = index;
       item.children = [];
     });
 
     const tree: any[] = [];
     data.forEach(item => {
-      if (item.parentId !== 'unassigned') {
+      if (item.parentId in map) {
         item.children.push(item);
       } else {
         tree.push(item);

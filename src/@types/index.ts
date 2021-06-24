@@ -37,6 +37,7 @@ export interface Category {
   _id: string;
   type: string;
   title: string;
+  color?: string;
   parentId: string;
   day?: any;
   firstScheduled: string;
