@@ -1,8 +1,8 @@
 import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { AmazingMarvinPluginSettings } from './@types/index';
+import { PluginSettings } from './@types/index';
 import AmazingMarvinApi from './api';
 
-const DEFAULT_APP_SETTINGS: AmazingMarvinPluginSettings = {
+const DEFAULT_APP_SETTINGS: PluginSettings = {
   apiToken: '',
   fullAccessToken: '',
 };
@@ -13,7 +13,7 @@ const DEFAULT_APP_SETTINGS: AmazingMarvinPluginSettings = {
  * @extends {Plugin}
  */
 export default class AmazingMarvinPlugin extends Plugin {
-  settings: AmazingMarvinPluginSettings;
+  settings: PluginSettings;
   amazingMarvinApi: AmazingMarvinApi;
 
   /**
@@ -96,7 +96,7 @@ class SampleModal extends Modal {
   onOpen(): void {
     const { contentEl } = this;
     contentEl.setText('Fetching data ...');
-    this.plugin.amazingMarvinApi.getScheduledToday().then(response => {
+    this.plugin.amazingMarvinApi.get('todayItems').then(response => {
       contentEl.setText(response.toString());
     });
   }
