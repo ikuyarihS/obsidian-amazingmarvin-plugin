@@ -1,7 +1,7 @@
 const hyperlinkRegex = /\[(?<text>[^\]]+?)\]\((?<href>https?:\S+?)\)/g;
 
 const utils = {
-  convertHyperlinks: (rawText: string): HTMLSpanElement => {
+  convertHyperlinks(rawText: string): HTMLSpanElement {
     const element = document.createElement('span');
     let match;
     let index = 0;
@@ -13,6 +13,42 @@ const utils = {
     }
     if (index === 0) element.appendText(rawText);
     return element;
+  },
+
+  getNote(note: string | any[]): string {
+    let nodes = note;
+    if (typeof note === 'string') nodes = JSON.parse(note.substr(note.indexOf('{')))?.document?.nodes;
+    return this.getTextFromNodes(nodes);
+  },
+
+  getTextFromNodes(nodes: any[]): string {
+    const results = nodes
+      .map(node => {
+        if (node.object === 'leaf' && node.text) return node.text;
+        else if (node.leaves || node.nodes) return this.getNote(node.leaves || node.nodes);
+      })
+      .filter(r => r);
+    if (results.length) return results.join('\n');
+  },
+
+  toTree(data: any[]): any[] {
+    const map: Record<string, number> = {};
+
+    data.forEach((item, index) => {
+      map[item.parentId] = index;
+      item.children = [];
+    });
+
+    const tree: any[] = [];
+    data.forEach(item => {
+      if (item.parentId !== 'unassigned') {
+        item.children.push(item);
+      } else {
+        tree.push(item);
+      }
+    });
+
+    return tree;
   },
 };
 
