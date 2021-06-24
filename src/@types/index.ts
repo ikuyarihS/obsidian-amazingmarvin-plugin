@@ -1,13 +1,9 @@
-export interface AmazingMarvin {
-  type: string;
-}
-
-export interface AmazingMarvinPluginSettings {
+export interface PluginSettings {
   apiToken: string;
   fullAccessToken: string;
 }
 
-export interface AmazingMarvinTask {
+export interface Task {
   _id: string;
   _rev: string;
   createdAt: number;
@@ -17,13 +13,14 @@ export interface AmazingMarvinTask {
   day: string;
   done: boolean;
   rank: number;
-  note: string;
+  note: string | null;
   timeEstimate: number;
   db: string;
   firstScheduled: string;
   updatedAt: number;
   dueDate: string;
   fieldUpdates: FieldUpdates;
+  children: Task[];
 }
 
 interface FieldUpdates {
@@ -31,5 +28,21 @@ interface FieldUpdates {
 }
 
 export interface Query {
+  title: string;
   type?: string;
+  showNote: boolean;
+}
+
+export interface Category {
+  _id: string;
+  type: string;
+  title: string;
+  parentId: string;
+  day?: any;
+  firstScheduled: string;
+  dueDate: string;
+  labelIds: string[];
+  priority?: any;
+  children?: Category[];
+  tasks: Task[];
 }
