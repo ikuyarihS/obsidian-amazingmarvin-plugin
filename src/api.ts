@@ -41,7 +41,7 @@ class AmazingMarvinApi {
         'X-API-Token': this.apiToken,
       },
     });
-    if (!response.ok) return;
+    if (!response.ok) throw new Error('wrong apiToken or api url');
     let data = await response.json();
 
     switch (dataType?.toLowerCase()) {
@@ -102,7 +102,7 @@ class AmazingMarvinApi {
     const container = el.createDiv();
     container.className = 'amazing-marvin-container';
 
-    container.createEl('p', { text: query.title || query.type || 'Tasks' });
+    container.createEl('h3', { text: query.title || query.type || 'Tasks' });
 
     const ul = container.createEl('ul');
     const items = [...categoriesTree, ...unassigned];
