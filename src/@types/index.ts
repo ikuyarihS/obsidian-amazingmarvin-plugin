@@ -39,7 +39,7 @@ interface FieldUpdates {
 
 export interface Query {
   title?: string;
-  type?: string;
+  type?: 'today' | 'due-today';
   showNote: boolean;
   colorTitle: boolean;
   hideEmpty: boolean;
