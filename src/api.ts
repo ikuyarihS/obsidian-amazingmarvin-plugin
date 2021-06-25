@@ -1,6 +1,7 @@
 import { MarkdownPostProcessorContext } from 'obsidian';
 import { Category, Label, Query, Task } from './@types';
 import { convertHyperlinks, getNote, hideEmpty, inherit, toTree } from './utils';
+import { DEFAULT_QUERY, INHERIT_PROPS } from './utils/constants';
 import { CATEGORY_ICON, INBOX_ICON, PROJECT_ICON } from './utils/icons';
 
 const base = 'https://serv.amazingmarvin.com/api';
@@ -9,14 +10,6 @@ const ICONS: Record<string, Element> = {
   category: CATEGORY_ICON,
   project: PROJECT_ICON,
   inbox: INBOX_ICON,
-};
-
-const DEFAULT_QUERY: Query = {
-  colorTitle: true,
-  showNote: false,
-  hideEmpty: true,
-  inheritColor: true,
-  showLabel: true,
 };
 
 const INBOX_CATEGORY = { _id: 'unassigned', title: 'Inbox', type: 'inbox', children: [], tasks: [] } as Category;
@@ -60,11 +53,15 @@ class AmazingMarvinApi {
     });
     if (!response.ok) throw new Error('wrong apiToken or api url');
     let data = await response.json();
+    data
+      .filter((item: Task | Category) => item.hasOwnProperty('subtasks'))
+      .forEach((item: Task) => (item.subtasks = Object.values(item.subtasks)));
 
     switch (dataType?.toLowerCase()) {
       case 'task':
       case 'tasks':
         data = this.getTasks(data);
+        break;
       default:
         break;
     }
@@ -201,15 +198,10 @@ class AmazingMarvinApi {
         listItem.appendChild(blockquote);
       }
 
-      if (item.children?.length > 0) {
+      INHERIT_PROPS.filter(prop => item[prop]?.length > 0).forEach(prop => {
         const innerUl = listItem.createEl('ul');
-        this.render(query, innerUl, item.children, labels);
-      }
-
-      if (item.tasks?.length > 0) {
-        const innerUl = listItem.createEl('ul');
-        this.render(query, innerUl, item.tasks, labels);
-      }
+        this.render(query, innerUl, item[prop], labels);
+      });
     });
   }
 
