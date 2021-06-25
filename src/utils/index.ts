@@ -1,10 +1,10 @@
-const hyperlinkRegex = /\[(?<text>[^\]]+?)\]\((?<href>https?:\S+?)\)/g;
+import { HYPERLINK_REGEX, INHERIT_PROPS } from './constants';
 
 export const convertHyperlinks = (rawText: string): HTMLSpanElement => {
   const element = document.createElement('span');
   let match;
   let index = 0;
-  while ((match = hyperlinkRegex.exec(rawText))) {
+  while ((match = HYPERLINK_REGEX.exec(rawText))) {
     const [_, text, href] = [...match];
     element.appendText(rawText.substring(index, match.index));
     index = match.index;
@@ -15,12 +15,13 @@ export const convertHyperlinks = (rawText: string): HTMLSpanElement => {
 };
 
 export const getNote = (note: string | any[]): string => {
-  let nodes = note;
-  if (typeof note === 'string') nodes = JSON.parse(note.substr(note.indexOf('{')))?.document?.nodes;
+  let nodes;
+  if (typeof note === 'string') nodes = JSON.parse(note.substr(note.indexOf('{')))?.document?.nodes as any[];
+  else nodes = note;
   return getTextFromNodes(nodes);
 };
 
-export const getTextFromNodes = (nodes: any): string => {
+export const getTextFromNodes = (nodes: any[]): string => {
   const results = nodes
     .map((node: any) => {
       if (node.object === 'leaf' && node.text) return node.text;
@@ -47,20 +48,14 @@ export const toTree = (data: any[]): any[] => {
 };
 
 export const inherit = (items: any[], props: string[]): void => {
-  items.forEach(item => {
-    props.forEach(prop => {
-      _inherit(prop, item, item.children);
-      _inherit(prop, item, item.tasks);
-    });
-  });
+  items.forEach(item => props.forEach(prop => INHERIT_PROPS.forEach(_prop => _inherit(prop, item, item[_prop]))));
 };
 
 const _inherit = (prop: string, parent: any, children: any[]) => {
-  if (!children) return;
+  if (!children || children.constructor !== Array) return;
   children.forEach(child => {
-    if (parent[prop]) child[prop] = child[prop] || parent[prop];
-    _inherit(prop, child, child.children);
-    _inherit(prop, child, child.tasks);
+    if (parent.hasOwnProperty(prop) && !child[prop]) child[prop] = parent[prop];
+    INHERIT_PROPS.forEach(_prop => _inherit(prop, child, child[_prop]));
   });
 };
 
