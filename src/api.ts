@@ -91,13 +91,13 @@ class AmazingMarvinApi {
   };
 
   /**
-   * @param {HTMLElement} el
+   * @private
    * @param {Query} query
    * @param {string} api
-   * @return {Promise<void>}
+   * @return {Promise<any[]>}
    * @memberof AmazingMarvinApi
    */
-  async renderTasks(el: HTMLElement, query: Query, api: string): Promise<void> {
+  private async getData(query: Query, api: string): Promise<any[]> {
     const [tasks, categories, labels] = await Promise.all([
       this.get(api, 'Tasks'),
       this.getCategories(),
@@ -118,29 +118,55 @@ class AmazingMarvinApi {
       }
     });
     const categoriesTree = toTree(categories);
-    el.innerText = '';
-
-    const container = el.createDiv();
-    container.className = 'amazing-marvin-container';
-
-    if (query.title || query.type) container.createEl('h3', { text: query.title || query.type });
-
-    const ul = container.createEl('ul');
     let items = [...categoriesTree, ...unassignedTasks];
     if (query.hideEmpty) items = hideEmpty(items);
     if (query.inheritColor) inherit(items, ['color']);
     const labelsMap = labels.reduce((map: Record<string, Label>, label: Label) => ({ ...map, [label._id]: label }), {});
-    this._render(query, ul, items, labelsMap);
+    return [items, labelsMap];
   }
 
   /**
+   * @param {HTMLElement} el
+   * @param {Query} query
+   * @param {string} api
+   * @return {Promise<void>}
+   * @memberof AmazingMarvinApi
+   */
+  async renderTasks(el: HTMLElement, query: Query, api: string): Promise<void> {
+    const getData = this.getData.bind(this);
+    const render = this.render.bind(this);
+    let [items, labelsMap] = await getData(query, api);
+
+    el.innerText = '';
+
+    const container = el.createDiv();
+    container.className = 'amazing-marvin-container';
+    if (query.title || query.type) container.createEl('h3', { text: query.title || query.type });
+    const button = container.createEl('button', { text: 'Refresh' });
+
+    let ul = container.createEl('ul');
+
+    button.onclick = () => {
+      (async () => {
+        [items, labelsMap] = await getData(query, api);
+        container.removeChild(ul);
+        ul = container.createEl('ul');
+        render(query, ul, items, labelsMap);
+      })();
+    };
+
+    render(query, ul, items, labelsMap);
+  }
+
+  /**
+   * @private
    * @param {Query} query
    * @param {HTMLElement} el
    * @param {any[]} items
    * @param {Label[]} labels
    * @memberof AmazingMarvinApi
    */
-  _render(query: Query, el: HTMLElement, items: any[], labels: Record<string, Label>): void {
+  private render(query: Query, el: HTMLElement, items: any[], labels: Record<string, Label>): void {
     items.forEach(item => {
       const listItem = el.createEl('li');
       const titleContainer = listItem.createDiv('title-container');
@@ -177,12 +203,12 @@ class AmazingMarvinApi {
 
       if (item.children?.length > 0) {
         const innerUl = listItem.createEl('ul');
-        this._render(query, innerUl, item.children, labels);
+        this.render(query, innerUl, item.children, labels);
       }
 
       if (item.tasks?.length > 0) {
         const innerUl = listItem.createEl('ul');
-        this._render(query, innerUl, item.tasks, labels);
+        this.render(query, innerUl, item.tasks, labels);
       }
     });
   }
