@@ -1,5 +1,5 @@
 import { MarkdownPostProcessorContext } from 'obsidian';
-import { Category, Query, Task } from './@types';
+import { Category, Label, Query, Task } from './@types';
 import { convertHyperlinks, getNote, hideEmpty, inherit, toTree } from './utils';
 import { CATEGORY_ICON, INBOX_ICON, PROJECT_ICON } from './utils/icons';
 
@@ -16,6 +16,7 @@ const DEFAULT_QUERY: Query = {
   showNote: false,
   hideEmpty: true,
   inheritColor: true,
+  showLabel: true,
 };
 
 const INBOX_CATEGORY = { _id: 'unassigned', title: 'Inbox', type: 'inbox', children: [], tasks: [] } as Category;
@@ -97,7 +98,11 @@ class AmazingMarvinApi {
    * @memberof AmazingMarvinApi
    */
   async renderTasks(el: HTMLElement, query: Query, api: string): Promise<void> {
-    const [tasks, categories] = await Promise.all([this.get(api, 'Tasks'), this.getCategories()]);
+    const [tasks, categories, labels] = await Promise.all([
+      this.get(api, 'Tasks'),
+      this.getCategories(),
+      this.get('labels'),
+    ]);
     if (!tasks) return;
     const categoriesMap: Record<string, Category> = categories.reduce(
       (map, category) => ({ ...map, [category._id]: category }),
@@ -118,39 +123,49 @@ class AmazingMarvinApi {
     const container = el.createDiv();
     container.className = 'amazing-marvin-container';
 
-    container.createEl('h3', { text: query.title || query.type || 'Tasks' });
+    if (query.title || query.type) container.createEl('h3', { text: query.title || query.type });
 
     const ul = container.createEl('ul');
     let items = [...categoriesTree, ...unassignedTasks];
     if (query.hideEmpty) items = hideEmpty(items);
     if (query.inheritColor) inherit(items, ['color']);
-    this._render(ul, items, query);
+    const labelsMap = labels.reduce((map: Record<string, Label>, label: Label) => ({ ...map, [label._id]: label }), {});
+    this._render(query, ul, items, labelsMap);
   }
 
   /**
-   * @private
-   * @param {HTMLElement} el
-   * @param {(Task | Category)[]} items
    * @param {Query} query
+   * @param {HTMLElement} el
+   * @param {any[]} items
+   * @param {Label[]} labels
    * @memberof AmazingMarvinApi
    */
-  _render(el: HTMLElement, items: any[], query: Query): void {
+  _render(query: Query, el: HTMLElement, items: any[], labels: Record<string, Label>): void {
     items.forEach(item => {
       const listItem = el.createEl('li');
+      const titleContainer = listItem.createDiv('title-container');
 
       // Add icon to Category and Project
       if (item.type) {
         const icon = ICONS[item.type].cloneNode(true) as HTMLElement;
         icon.style.marginRight = '5px';
         if (item.color) icon.style.color = item.color;
-        listItem.appendChild(icon);
+        titleContainer.appendChild(icon);
       }
 
       // Get title and add color
       const title = convertHyperlinks(item.title);
       if (query.colorTitle && item.color) title.style.color = item.color;
 
-      listItem.appendChild(title);
+      titleContainer.appendChild(title);
+
+      if (query.showLabel && item.labelIds) {
+        item.labelIds.forEach((labelId: string) => {
+          const label = titleContainer.createEl('div', { cls: 'label', text: labels[labelId].title });
+          label.style.color = labels[labelId].color;
+          // label.style.borderColor = labels[labelId].color;
+        });
+      }
 
       // Note is a nested objects, hence the complication
       let note;
@@ -163,12 +178,12 @@ class AmazingMarvinApi {
 
       if (item.children?.length > 0) {
         const innerUl = listItem.createEl('ul');
-        this._render(innerUl, item.children, query);
+        this._render(query, innerUl, item.children, labels);
       }
 
       if (item.tasks?.length > 0) {
         const innerUl = listItem.createEl('ul');
-        this._render(innerUl, item.tasks, query);
+        this._render(query, innerUl, item.tasks, labels);
       }
     });
   }

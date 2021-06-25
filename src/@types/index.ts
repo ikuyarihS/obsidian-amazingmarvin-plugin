@@ -22,6 +22,7 @@ export interface Task {
   fieldUpdates: FieldUpdates;
   children: Task[];
   color?: string;
+  labelIds?: string[];
 }
 
 interface FieldUpdates {
@@ -35,6 +36,7 @@ export interface Query {
   colorTitle: boolean;
   hideEmpty: boolean;
   inheritColor: boolean;
+  showLabel: boolean;
 }
 
 export interface Category {
@@ -50,4 +52,10 @@ export interface Category {
   priority?: any;
   children?: Category[];
   tasks: Task[];
+}
+
+export interface Label {
+  _id: string;
+  title: string;
+  color: string;
 }
