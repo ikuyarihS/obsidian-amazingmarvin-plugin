@@ -1,7 +1,7 @@
 import { MarkdownPostProcessorContext } from 'obsidian';
 import { Category, Query, Task } from './@types';
-import utils from './utils';
-import { PROJECT_ICON, CATEGORY_ICON, INBOX_ICON } from './utils/icons';
+import { convertHyperlinks, getNote, hideEmpty, inherit, toTree } from './utils';
+import { CATEGORY_ICON, INBOX_ICON, PROJECT_ICON } from './utils/icons';
 
 const base = 'https://serv.amazingmarvin.com/api';
 
@@ -108,14 +108,11 @@ class AmazingMarvinApi {
       if (task.parentId in categoriesMap) {
         categoriesMap[task.parentId].tasks = categoriesMap[task.parentId].tasks || [];
         categoriesMap[task.parentId].tasks.push(task);
-        if (query.inheritColor && task.color === undefined && categoriesMap[task.parentId].color) {
-          task.color = categoriesMap[task.parentId].color;
-        }
       } else {
         unassignedTasks.push(task);
       }
     });
-    const categoriesTree = utils.toTree(categories, query.inheritColor ? ['color'] : undefined);
+    const categoriesTree = toTree(categories);
     el.innerText = '';
 
     const container = el.createDiv();
@@ -125,7 +122,8 @@ class AmazingMarvinApi {
 
     const ul = container.createEl('ul');
     let items = [...categoriesTree, ...unassignedTasks];
-    if (query.hideEmpty) items = utils.hideEmpty(items);
+    if (query.hideEmpty) items = hideEmpty(items);
+    if (query.inheritColor) inherit(items, ['color']);
     this._render(ul, items, query);
   }
 
@@ -149,16 +147,16 @@ class AmazingMarvinApi {
       }
 
       // Get title and add color
-      const title = utils.convertHyperlinks(item.title);
+      const title = convertHyperlinks(item.title);
       if (query.colorTitle && item.color) title.style.color = item.color;
 
       listItem.appendChild(title);
 
       // Note is a nested objects, hence the complication
       let note;
-      if (query.showNote && item.note && (note = utils.getNote(item.note))) {
+      if (query.showNote && item.note && (note = getNote(item.note))) {
         const blockquote = listItem.createEl('blockquote');
-        const noteElement = utils.convertHyperlinks(note);
+        const noteElement = convertHyperlinks(note);
         blockquote.appendChild(noteElement);
         listItem.appendChild(blockquote);
       }
@@ -201,6 +199,7 @@ class AmazingMarvinApi {
             break;
         }
       } catch (err) {
+        console.log(err);
         el.style.color = 'red';
         if (err instanceof SyntaxError) el.innerText = `[Amazing Marvin Plugin] Invalid JSON - ${err}`;
         else el.innerText = `[Amazing Marvin Plugin] Unhandled error - ${err}`;
