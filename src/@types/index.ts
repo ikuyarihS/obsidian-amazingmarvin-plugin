@@ -23,6 +23,14 @@ export interface Task {
   children: Task[];
   color?: string;
   labelIds?: string[];
+  subtasks?: Record<string, Subtask> | Subtask[];
+}
+
+export interface Subtask {
+  _id: string;
+  title: string;
+  done: boolean;
+  rank: number;
 }
 
 interface FieldUpdates {
