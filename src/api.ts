@@ -163,7 +163,6 @@ class AmazingMarvinApi {
         item.labelIds.forEach((labelId: string) => {
           const label = titleContainer.createEl('div', { cls: 'label', text: labels[labelId].title });
           label.style.color = labels[labelId].color;
-          // label.style.borderColor = labels[labelId].color;
         });
       }
 
