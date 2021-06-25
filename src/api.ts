@@ -1,9 +1,23 @@
 import { MarkdownPostProcessorContext } from 'obsidian';
 import { Category, Query, Task } from './@types';
 import utils from './utils';
-import { PROJECT_ICON, CATEGORY_ICON } from './utils/icons';
+import { PROJECT_ICON, CATEGORY_ICON, INBOX_ICON } from './utils/icons';
 
 const base = 'https://serv.amazingmarvin.com/api';
+
+const ICONS: Record<string, Element> = {
+  category: CATEGORY_ICON,
+  project: PROJECT_ICON,
+  inbox: INBOX_ICON,
+};
+
+const DEFAULT_QUERY: Query = {
+  colorTitle: true,
+  showNote: false,
+  hideEmpty: true,
+};
+
+const INBOX_CATEGORY = { _id: 'unassigned', title: 'Inbox', type: 'inbox', children: [], tasks: [] } as Category;
 
 /**
  * @class AmazingMarvinApi
@@ -61,7 +75,7 @@ class AmazingMarvinApi {
    */
   async getCategories(): Promise<Category[]> {
     const results = await this.get('categories');
-    return results as Category[];
+    return [{ ...INBOX_CATEGORY, children: [], tasks: [] }, ...results] as Category[];
   }
 
   /**
@@ -82,7 +96,7 @@ class AmazingMarvinApi {
    * @memberof AmazingMarvinApi
    */
   async renderTasks(el: HTMLElement, query: Query, api: string): Promise<void> {
-    const [tasks, categories] = await Promise.all([this.get(api), this.getCategories()]);
+    const [tasks, categories] = await Promise.all([this.get(api, 'Tasks'), this.getCategories()]);
     if (!tasks) return;
     const categoriesMap: Record<string, Category> = categories.reduce(
       (map, category) => ({ ...map, [category._id]: category }),
@@ -106,7 +120,8 @@ class AmazingMarvinApi {
     container.createEl('h3', { text: query.title || query.type || 'Tasks' });
 
     const ul = container.createEl('ul');
-    const items = [...categoriesTree, ...unassignedTasks];
+    let items = [...categoriesTree, ...unassignedTasks];
+    if (query.hideEmpty) items = utils.hideEmpty(items);
     this._render(ul, items, query);
   }
 
@@ -123,7 +138,7 @@ class AmazingMarvinApi {
 
       // Add icon to Category and Project
       if (item.type) {
-        const icon = (item.type === 'category' ? CATEGORY_ICON : PROJECT_ICON).cloneNode(true) as HTMLElement;
+        const icon = ICONS[item.type].cloneNode(true) as HTMLElement;
         icon.style.marginRight = '5px';
         if (item.color) icon.style.color = item.color;
         listItem.appendChild(icon);
@@ -144,10 +159,14 @@ class AmazingMarvinApi {
         listItem.appendChild(blockquote);
       }
 
-      const children = item.children?.length > 0 ? item.children : item.tasks;
-      if (children?.length > 0) {
+      if (item.children?.length > 0) {
         const innerUl = listItem.createEl('ul');
-        this._render(innerUl, children, query);
+        this._render(innerUl, item.children, query);
+      }
+
+      if (item.tasks?.length > 0) {
+        const innerUl = listItem.createEl('ul');
+        this._render(innerUl, item.tasks, query);
       }
     });
   }
@@ -163,7 +182,7 @@ class AmazingMarvinApi {
       const node = el.querySelector<HTMLPreElement>('code[class*="language-amazingmarvin"]');
       if (!node) return;
       try {
-        const query = JSON.parse(node.innerText) as Query;
+        const query = Object.assign({}, DEFAULT_QUERY, JSON.parse(node.innerText)) as Query;
         el.innerText = 'Fetching data from Amazing Marvin ...';
         switch (query.type) {
           case 'today':
@@ -173,12 +192,13 @@ class AmazingMarvinApi {
             await this.renderTasks(el, query, 'dueItems');
             break;
           default:
+            el.style.color = 'red';
             el.innerText = '[Amazing Marvin Plugin] Unknown config';
             break;
         }
       } catch (err) {
         el.style.color = 'red';
-        if (err instanceof SyntaxError) el.innerText = '[Amazing Marvin Plugin] Syntax Error! Invalid JSON!';
+        if (err instanceof SyntaxError) el.innerText = `[Amazing Marvin Plugin] Invalid JSON - ${err}`;
         else el.innerText = `[Amazing Marvin Plugin] Unhandled error - ${err}`;
       }
     })();

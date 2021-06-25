@@ -46,6 +46,21 @@ const utils = {
 
     return tree;
   },
+
+  hideEmpty(items: any[]): any[] {
+    const filtered = items.filter(item => {
+      if (item.children) item.children = item.children.filter((child: any) => !this.isEmpty(child));
+      if (!item.children) delete item.children;
+      return !this.isEmpty(item);
+    });
+    return filtered;
+  },
+
+  isEmpty(item: any): boolean {
+    if (item.db === 'Tasks') return false;
+    if (item.tasks?.length > 0) return false;
+    return (item.children || []).every((child: any) => this.isEmpty(child));
+  },
 };
 
 export default utils;
