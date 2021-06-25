@@ -159,16 +159,16 @@ class SettingTab extends PluginSettingTab {
         })
     );
 
-    new Setting(containerEl).setName('Full access token').addText(text =>
-      text
-        .setPlaceholder('Enter your fullAccessToken')
-        .setValue(this.plugin.settings.fullAccessToken)
-        .onChange(async fullAccessToken => {
-          const fullAccessTokenTrimmed = fullAccessToken.trim();
-          this.plugin.settings.apiToken = fullAccessTokenTrimmed;
-          this.plugin.amazingMarvinApi.changeToken(fullAccessTokenTrimmed);
-          await this.plugin.saveSettings();
-        })
-    );
+    // new Setting(containerEl).setName('Full access token').addText(text =>
+    //   text
+    //     .setPlaceholder('Enter your fullAccessToken')
+    //     .setValue(this.plugin.settings.fullAccessToken)
+    //     .onChange(async fullAccessToken => {
+    //       const fullAccessTokenTrimmed = fullAccessToken.trim();
+    //       this.plugin.settings.apiToken = fullAccessTokenTrimmed;
+    //       this.plugin.amazingMarvinApi.changeToken(fullAccessTokenTrimmed);
+    //       await this.plugin.saveSettings();
+    //     })
+    // );
   }
 }
