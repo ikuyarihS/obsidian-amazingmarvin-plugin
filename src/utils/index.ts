@@ -1,70 +1,80 @@
 const hyperlinkRegex = /\[(?<text>[^\]]+?)\]\((?<href>https?:\S+?)\)/g;
 
-const utils = {
-  convertHyperlinks(rawText: string): HTMLSpanElement {
-    const element = document.createElement('span');
-    let match;
-    let index = 0;
-    while ((match = hyperlinkRegex.exec(rawText))) {
-      const [_, text, href] = [...match];
-      element.appendText(rawText.substring(index, match.index));
-      index = match.index;
-      element.createEl('a', { text: text, href: href });
-    }
-    if (index === 0) element.appendText(rawText);
-    return element;
-  },
-
-  getNote(note: string | any[]): string {
-    let nodes = note;
-    if (typeof note === 'string') nodes = JSON.parse(note.substr(note.indexOf('{')))?.document?.nodes;
-    return this.getTextFromNodes(nodes);
-  },
-
-  getTextFromNodes(nodes: any[]): string {
-    const results = nodes
-      .map(node => {
-        if (node.object === 'leaf' && node.text) return node.text;
-        else if (node.leaves || node.nodes) return this.getNote(node.leaves || node.nodes);
-      })
-      .filter(r => r);
-    if (results.length) return results.join('\n');
-  },
-
-  toTree(data: any[], inherits?: string[]): any[] {
-    const map: any = data.reduce((obj, item) => ({ ...obj, [item._id]: item }), {});
-
-    const tree: any[] = [];
-    data.forEach(item => {
-      if (item.parentId in map) {
-        map[item.parentId].children = map[item.parentId].children || [];
-        map[item.parentId].children.push(item);
-        if (inherits)
-          inherits.forEach(
-            prop => map[item.parentId][prop] && item[prop] === undefined && (item[prop] = map[item.parentId][prop])
-          );
-      } else {
-        tree.push(item);
-      }
-    });
-
-    return tree;
-  },
-
-  hideEmpty(items: any[]): any[] {
-    const filtered = items.filter(item => {
-      if (item.children) item.children = this.hideEmpty(item.children);
-      if (!item.children) delete item.children;
-      return !this.isEmpty(item);
-    });
-    return filtered;
-  },
-
-  isEmpty(item: any): boolean {
-    if (item.db === 'Tasks') return false;
-    if (item.tasks?.length > 0) return false;
-    return (item.children || []).every((child: any) => this.isEmpty(child));
-  },
+export const convertHyperlinks = (rawText: string): HTMLSpanElement => {
+  const element = document.createElement('span');
+  let match;
+  let index = 0;
+  while ((match = hyperlinkRegex.exec(rawText))) {
+    const [_, text, href] = [...match];
+    element.appendText(rawText.substring(index, match.index));
+    index = match.index;
+    element.createEl('a', { text: text, href: href });
+  }
+  if (index === 0) element.appendText(rawText);
+  return element;
 };
 
-export default utils;
+export const getNote = (note: string | any[]): string => {
+  let nodes = note;
+  if (typeof note === 'string') nodes = JSON.parse(note.substr(note.indexOf('{')))?.document?.nodes;
+  return getTextFromNodes(nodes);
+};
+
+export const getTextFromNodes = (nodes: any): string => {
+  const results = nodes
+    .map((node: any) => {
+      if (node.object === 'leaf' && node.text) return node.text;
+      else if (node.leaves || node.nodes) return getNote(node.leaves || node.nodes);
+    })
+    .filter((node: any) => node);
+  if (results.length) return results.join('\n');
+};
+
+export const toTree = (data: any[]): any[] => {
+  const map: any = data.reduce((obj, item) => ({ ...obj, [item._id]: item }), {});
+
+  const tree: any[] = [];
+  data.forEach(item => {
+    if (item.parentId in map) {
+      map[item.parentId].children = map[item.parentId].children || [];
+      map[item.parentId].children.push(item);
+    } else {
+      tree.push(item);
+    }
+  });
+
+  return tree;
+};
+
+export const inherit = (items: any[], props: string[]): void => {
+  items.forEach(item => {
+    props.forEach(prop => {
+      _inherit(prop, item, item.children);
+      _inherit(prop, item, item.tasks);
+    });
+  });
+};
+
+const _inherit = (prop: string, parent: any, children: any[]) => {
+  if (!children) return;
+  children.forEach(child => {
+    if (parent[prop]) child[prop] = child[prop] || parent[prop];
+    _inherit(prop, child, child.children);
+    _inherit(prop, child, child.tasks);
+  });
+};
+
+export const hideEmpty = (items: any[]): any[] => {
+  const filtered = items.filter(item => {
+    if (item.children) item.children = hideEmpty(item.children);
+    if (!item.children) delete item.children;
+    return !isEmpty(item);
+  });
+  return filtered;
+};
+
+const isEmpty = (item: any): boolean => {
+  if (item.db === 'Tasks') return false;
+  if (item.tasks?.length > 0) return false;
+  return (item.children || []).every((child: any) => isEmpty(child));
+};
