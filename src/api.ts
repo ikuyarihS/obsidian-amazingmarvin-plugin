@@ -1,6 +1,7 @@
 import { MarkdownPostProcessorContext } from 'obsidian';
 import { Category, Query, Task } from './@types';
 import utils from './utils';
+import { PROJECT_ICON, CATEGORY_ICON } from './utils/icons';
 
 const base = 'https://serv.amazingmarvin.com/api';
 
@@ -119,15 +120,30 @@ class AmazingMarvinApi {
   _render(el: HTMLElement, items: any[], query: Query): void {
     items.forEach(item => {
       const listItem = el.createEl('li');
+
+      // Add icon to Category and Project
+      if (item.type) {
+        const icon = (item.type === 'category' ? CATEGORY_ICON : PROJECT_ICON).cloneNode(true) as HTMLElement;
+        icon.style.marginRight = '5px';
+        if (item.color) icon.style.color = item.color;
+        listItem.appendChild(icon);
+      }
+
+      // Get title and add color
       const title = utils.convertHyperlinks(item.title);
-      if (item.color) title.style.color = item.color;
+      if (query.colorTitle && item.color) title.style.color = item.color;
+
       listItem.appendChild(title);
+
+      // Note is a nested objects, hence the complication
       let note;
       if (query.showNote && item.note && (note = utils.getNote(item.note))) {
         const blockquote = listItem.createEl('blockquote');
-        blockquote.appendChild(utils.convertHyperlinks(note));
+        const noteElement = utils.convertHyperlinks(note);
+        blockquote.appendChild(noteElement);
         listItem.appendChild(blockquote);
       }
+
       const children = item.children?.length > 0 ? item.children : item.tasks;
       if (children?.length > 0) {
         const innerUl = listItem.createEl('ul');

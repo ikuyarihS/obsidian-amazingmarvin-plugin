@@ -31,6 +31,7 @@ export interface Query {
   title: string;
   type?: string;
   showNote: boolean;
+  colorTitle: boolean;
 }
 
 export interface Category {
