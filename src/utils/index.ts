@@ -31,7 +31,7 @@ const utils = {
     if (results.length) return results.join('\n');
   },
 
-  toTree(data: any[]): any[] {
+  toTree(data: any[], inherits?: string[]): any[] {
     const map: any = data.reduce((obj, item) => ({ ...obj, [item._id]: item }), {});
 
     const tree: any[] = [];
@@ -39,6 +39,10 @@ const utils = {
       if (item.parentId in map) {
         map[item.parentId].children = map[item.parentId].children || [];
         map[item.parentId].children.push(item);
+        if (inherits)
+          inherits.forEach(
+            prop => map[item.parentId][prop] && item[prop] === undefined && (item[prop] = map[item.parentId][prop])
+          );
       } else {
         tree.push(item);
       }

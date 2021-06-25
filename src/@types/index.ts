@@ -21,6 +21,7 @@ export interface Task {
   dueDate: string;
   fieldUpdates: FieldUpdates;
   children: Task[];
+  color?: string;
 }
 
 interface FieldUpdates {
@@ -33,6 +34,7 @@ export interface Query {
   showNote: boolean;
   colorTitle: boolean;
   hideEmpty: boolean;
+  inheritColor: boolean;
 }
 
 export interface Category {

@@ -15,6 +15,7 @@ const DEFAULT_QUERY: Query = {
   colorTitle: true,
   showNote: false,
   hideEmpty: true,
+  inheritColor: true,
 };
 
 const INBOX_CATEGORY = { _id: 'unassigned', title: 'Inbox', type: 'inbox', children: [], tasks: [] } as Category;
@@ -107,11 +108,14 @@ class AmazingMarvinApi {
       if (task.parentId in categoriesMap) {
         categoriesMap[task.parentId].tasks = categoriesMap[task.parentId].tasks || [];
         categoriesMap[task.parentId].tasks.push(task);
+        if (query.inheritColor && task.color === undefined && categoriesMap[task.parentId].color) {
+          task.color = categoriesMap[task.parentId].color;
+        }
       } else {
         unassignedTasks.push(task);
       }
     });
-    const categoriesTree = utils.toTree(categories);
+    const categoriesTree = utils.toTree(categories, query.inheritColor ? ['color'] : undefined);
     el.innerText = '';
 
     const container = el.createDiv();
