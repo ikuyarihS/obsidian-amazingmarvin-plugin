@@ -12,7 +12,28 @@ Example of a valid config:
     "showNote": true
 }
 ```
-All configs:
+### All configs:
+
+```ts
+export interface Query {
+  title?: string;
+  type?: 'today' | 'due-today';
+  showNote: boolean;
+  colorTitle: boolean;
+  hideEmpty: boolean;
+  inheritColor: boolean;
+  showLabel: boolean;
+}
+
+export const DEFAULT_QUERY: Query = {
+  colorTitle: true,
+  showNote: false,
+  hideEmpty: true,
+  inheritColor: true,
+  showLabel: true,
+};
+```
+
 | Name         | Description                                                                         | Type                   | Default |
 |--------------|-------------------------------------------------------------------------------------|------------------------|---------|
 | title        | Title of the block.                                                                 | string                 | -       |
