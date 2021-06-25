@@ -28,10 +28,11 @@ interface FieldUpdates {
 }
 
 export interface Query {
-  title: string;
+  title?: string;
   type?: string;
   showNote: boolean;
   colorTitle: boolean;
+  hideEmpty: boolean;
 }
 
 export interface Category {
