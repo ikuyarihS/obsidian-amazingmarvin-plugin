@@ -5,3 +5,4 @@ library.add(faFolder, faFlag);
 
 export const CATEGORY_ICON = icon({ prefix: 'fas', iconName: 'folder' }).node[0];
 export const PROJECT_ICON = icon({ prefix: 'fas', iconName: 'flag' }).node[0];
+export const INBOX_ICON = icon({ prefix: 'fas', iconName: 'inbox' }).node[0];
