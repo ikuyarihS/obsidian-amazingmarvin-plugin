@@ -49,7 +49,7 @@ const utils = {
 
   hideEmpty(items: any[]): any[] {
     const filtered = items.filter(item => {
-      if (item.children) item.children = item.children.filter((child: any) => !this.isEmpty(child));
+      if (item.children) item.children = this.hideEmpty(item.children);
       if (!item.children) delete item.children;
       return !this.isEmpty(item);
     });
