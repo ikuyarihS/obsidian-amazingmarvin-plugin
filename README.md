@@ -1,6 +1,6 @@
-## Obsidian Sample Plugin
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ikuyarihS/obsidian-amazingmarvin-plugin?style=for-the-badge&sort=semver)](https://github.com/ikuyarihS/obsidian-amazingmarvin-plugin/releases/latest)
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+This is a plugin for Obsidian (https://obsidian.md).
 
 ## Configs
 The configs has to be put in a valid JSON formats, the plugin will actually raise errors if it cannot convert (relying on `JSON.parse`)
