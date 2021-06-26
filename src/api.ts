@@ -95,11 +95,9 @@ class AmazingMarvinApi {
    * @memberof AmazingMarvinApi
    */
   private async getData(query: Query, api: string): Promise<any[]> {
-    const [tasks, categories, labels] = await Promise.all([
-      this.get(api, 'Tasks'),
-      this.getCategories(),
-      this.get('labels'),
-    ]);
+    let getLabelsTask = undefined;
+    if (query.showLabel) getLabelsTask = this.get('labels');
+    const [tasks, categories] = await Promise.all([this.get(api, 'Tasks'), this.getCategories()]);
     if (!tasks) return;
     const categoriesMap: Record<string, Category> = categories.reduce(
       (map, category) => ({ ...map, [category._id]: category }),
@@ -118,6 +116,7 @@ class AmazingMarvinApi {
     let items = [...categoriesTree, ...unassignedTasks];
     if (query.hideEmpty) items = hideEmpty(items);
     if (query.inheritColor) inherit(items, ['color']);
+    const labels = getLabelsTask ? await getLabelsTask : [];
     const labelsMap = labels.reduce((map: Record<string, Label>, label: Label) => ({ ...map, [label._id]: label }), {});
     return [items, labelsMap];
   }
@@ -145,12 +144,16 @@ class AmazingMarvinApi {
 
     button.onclick = () => {
       (async () => {
+        button.disabled = true;
+        button.setText('Refreshing');
         ul.style.color = 'gray';
         ul.innerHTML = ul.innerHTML.replace(/color: rgb\([\d ,]+\)/gim, 'color="gray"');
         [items, labelsMap] = await getData(query, api);
         container.removeChild(ul);
         ul = container.createEl('ul');
         render(query, ul, items, labelsMap);
+        button.disabled = false;
+        button.setText('Refresh');
       })();
     };
 
