@@ -1,4 +1,5 @@
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ikuyarihS/obsidian-amazingmarvin-plugin?style=for-the-badge&sort=semver)](https://github.com/ikuyarihS/obsidian-amazingmarvin-plugin/releases/latest)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ikuyarihS/obsidian-amazingmarvin-plugin?style=flat&sort=semver)](https://github.com/ikuyarihS/obsidian-amazingmarvin-plugin/releases/latest)
+![GitHub All Releases](https://img.shields.io/github/downloads/ikuyarihS/obsidian-amazingmarvin-plugin/total?style=flat)
 
 This is a plugin for Obsidian (https://obsidian.md).
 
@@ -22,6 +23,18 @@ Example of a valid config:
 ```
 ### All configs:
 
+| Name         | Description                                                                         | Type                   | Default |
+|--------------|-------------------------------------------------------------------------------------|------------------------|---------|
+| title        | Title of the block.                                                                 | string                 | -       |
+| type         | Type of the block.                                                                  | "today" \| "due-today" | -       |
+| showNote     | Show notes. Default to true.                                                        | boolean                | false   |
+| colorTitle   | Color the name of category, project and tasks. If false, will only color the icons. | boolean                | true    |
+| hideEmpty    | Hide empty directory. Default to true.                                              | boolean                | true    |
+| inheritColor | Inherit colors from closest parent. Default to true.                                | boolean                | true    |
+| showLabel    | Whether to render labels or not. Default to true.                                   | boolean                | true    |
+
+#### Config interface
+
 ```ts
 export interface Query {
   title?: string;
@@ -41,13 +54,3 @@ export const DEFAULT_QUERY: Query = {
   showLabel: true,
 };
 ```
-
-| Name         | Description                                                                         | Type                   | Default |
-|--------------|-------------------------------------------------------------------------------------|------------------------|---------|
-| title        | Title of the block.                                                                 | string                 | -       |
-| type         | Type of the block.                                                                  | "today" \| "due-today" | -       |
-| showNote     | Show notes. Default to true.                                                        | boolean                | false   |
-| colorTitle   | Color the name of category, project and tasks. If false, will only color the icons. | boolean                | true    |
-| hideEmpty    | Hide empty directory. Default to true.                                              | boolean                | true    |
-| inheritColor | Inherit colors from closest parent. Default to true.                                | boolean                | true    |
-| showLabel    | Whether to render labels or not. Default to true.                                   | boolean                | true    |
