@@ -24,26 +24,26 @@ export default class AmazingMarvinPlugin extends Plugin {
     this.amazingMarvinApi = new AmazingMarvinApi(this.settings.apiToken);
     this.registerMarkdownPostProcessor(this.amazingMarvinApi.parseCodeblock.bind(this.amazingMarvinApi));
 
-    this.addRibbonIcon('dice', 'Sample Plugin', () => {
-      new Notice('This is a notice!');
-    });
+    // this.addRibbonIcon('dice', 'Sample Plugin', () => {
+    //   new Notice('This is a notice!');
+    // });
 
-    this.addStatusBarItem().setText('Status Bar Text');
+    // this.addStatusBarItem().setText('Status Bar Text');
 
-    this.addCommand({
-      id: 'test-get-scheduled-today',
-      name: 'Get all tasks scheduled today',
-      checkCallback: (checking: boolean) => {
-        const leaf = this.app.workspace.activeLeaf;
-        if (leaf) {
-          if (!checking) {
-            new SampleModal(this.app, this).open();
-          }
-          return true;
-        }
-        return false;
-      },
-    });
+    // this.addCommand({
+    //   id: 'test-get-scheduled-today',
+    //   name: 'Get all tasks scheduled today',
+    //   checkCallback: (checking: boolean) => {
+    //     const leaf = this.app.workspace.activeLeaf;
+    //     if (leaf) {
+    //       if (!checking) {
+    //         new SampleModal(this.app, this).open();
+    //       }
+    //       return true;
+    //     }
+    //     return false;
+    //   },
+    // });
 
     this.addSettingTab(new SettingTab(this.app, this));
 

@@ -145,6 +145,8 @@ class AmazingMarvinApi {
 
     button.onclick = () => {
       (async () => {
+        ul.style.color = 'gray';
+        ul.innerHTML = ul.innerHTML.replace(/color: rgb\([\d ,]+\)/gim, 'color="gray"');
         [items, labelsMap] = await getData(query, api);
         container.removeChild(ul);
         ul = container.createEl('ul');
@@ -166,7 +168,7 @@ class AmazingMarvinApi {
   private render(query: Query, el: HTMLElement, items: any[], labels: Record<string, Label>): void {
     items.forEach(item => {
       const listItem = el.createEl('li');
-      const titleContainer = listItem.createDiv('title-container');
+      const titleContainer = listItem.createDiv('amazing-marvin-title-container');
 
       // Add icon to Category and Project
       if (item.type) {
@@ -184,7 +186,7 @@ class AmazingMarvinApi {
 
       if (query.showLabel && item.labelIds) {
         item.labelIds.forEach((labelId: string) => {
-          const label = titleContainer.createEl('div', { cls: 'label', text: labels[labelId].title });
+          const label = titleContainer.createEl('div', { cls: 'amazing-marvin-label', text: labels[labelId].title });
           label.style.color = labels[labelId].color;
         });
       }
