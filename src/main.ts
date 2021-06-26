@@ -1,4 +1,4 @@
-import { App, Modal, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { PluginSettings } from './@types/index';
 import AmazingMarvinApi from './api';
 
@@ -48,44 +48,6 @@ export default class AmazingMarvinPlugin extends Plugin {
    */
   async saveSettings(): Promise<void> {
     await this.saveData(this.settings);
-  }
-}
-
-/**
- * @class SampleModal
- * @extends {Modal}
- */
-class SampleModal extends Modal {
-  plugin: AmazingMarvinPlugin;
-
-  /**
-   * Creates an instance of SampleModal.
-   * @param {App} app
-   * @param {AmazingMarvinPlugin} plugin
-   * @memberof SampleModal
-   */
-  constructor(app: App, plugin: AmazingMarvinPlugin) {
-    super(app);
-    this.plugin = plugin;
-  }
-
-  /**
-   * @memberof SampleModal
-   */
-  onOpen(): void {
-    const { contentEl } = this;
-    contentEl.setText('Fetching data ...');
-    this.plugin.amazingMarvinApi.get('todayItems').then(response => {
-      contentEl.setText(response.toString());
-    });
-  }
-
-  /**
-   * @memberof SampleModal
-   */
-  onClose(): void {
-    const { contentEl } = this;
-    contentEl.empty();
   }
 }
 
