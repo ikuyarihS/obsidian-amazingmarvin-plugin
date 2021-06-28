@@ -4,8 +4,11 @@
 
 This is a plugin for Obsidian (https://obsidian.md).
 
-**Note:** You will need an api token from Amazing Marvin.
+**Note:**
+
+You will need an api token from Amazing Marvin.
 You can get one here - https://app.amazingmarvin.com/pre?api
+
 For more information, please read here - https://github.com/amazingmarvin/MarvinAPI/wiki/Marvin-API
 
 ### Examples
