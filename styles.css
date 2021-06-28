@@ -11,6 +11,11 @@
   white-space: nowrap;
 }
 
+.amazing-marvin-list::before,
+.amazing-marvin-list-item::before {
+  content: None !important;
+}
+
 .amazing-marvin-error-display {
   color: red;
 }
