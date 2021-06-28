@@ -1,3 +1,4 @@
+[![Release](https://github.com/ikuyarihS/obsidian-amazingmarvin-plugin/actions/workflows/release.yaml/badge.svg)](https://github.com/ikuyarihS/obsidian-amazingmarvin-plugin/actions/workflows/release.yaml)
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ikuyarihS/obsidian-amazingmarvin-plugin?style=flat&sort=semver)](https://github.com/ikuyarihS/obsidian-amazingmarvin-plugin/releases/latest)
 ![GitHub All Releases](https://img.shields.io/github/downloads/ikuyarihS/obsidian-amazingmarvin-plugin/total?style=flat)
 
