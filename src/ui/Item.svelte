@@ -20,11 +20,11 @@
   let note;
 </script>
 
-<ul class="amazing-marvin-list" in:fly={{ x: 100, duration: 450, easing: quintOut }} out:fade>
+<ul class="amazing-marvin-list" in:fly={{ x: 100, duration: query.isAnimated ? 450 : 0, easing: quintOut }} out:fade>
   {#each items as item, index}
     <li
       class="amazing-marvin-list-item"
-      in:fly={{ x: 100, duration: 450, delay: 100 * index, easing: quintOut }}
+      in:fly={{ x: 100, duration: query.isAnimated ? 450 : 0, delay: 100 * index, easing: quintOut }}
       out:fade
     >
       <div class="amazing-marvin-title-container">
