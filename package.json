@@ -8,7 +8,9 @@
   "main": "src/index.js",
   "scripts": {
     "build": "rollup --config rollup.config.js --environment BUILD:production",
-    "dev": "rollup --config rollup.config.js -w"
+    "dev": "rollup --config rollup.config.js -w",
+    "format": "prettier --write src/**/*",
+    "lint": "prettier --check src/**/*"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
@@ -24,6 +26,8 @@
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.3.0",
     "obsidian": "^0.12.5",
+    "prettier": "^2.3.2",
+    "prettier-plugin-svelte": "^2.3.1",
     "rollup": "^2.52.3",
     "rollup-plugin-svelte": "^7.1.0",
     "svelte": "^3.38.3",
