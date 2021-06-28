@@ -3,6 +3,17 @@ export interface PluginSettings {
   fullAccessToken: string;
 }
 
+export interface Query {
+  title?: string;
+  type?: 'today' | 'due-today';
+  showNote: boolean;
+  colorTitle: boolean;
+  hideEmpty: boolean;
+  inheritColor: boolean;
+  showLabel: boolean;
+  isAnimated: boolean;
+}
+
 export interface Task {
   _id: string;
   _rev: string;
@@ -35,16 +46,6 @@ export interface Subtask {
 
 interface FieldUpdates {
   dueDate: number;
-}
-
-export interface Query {
-  title?: string;
-  type?: 'today' | 'due-today';
-  showNote: boolean;
-  colorTitle: boolean;
-  hideEmpty: boolean;
-  inheritColor: boolean;
-  showLabel: boolean;
 }
 
 export interface Category {
