@@ -14,21 +14,22 @@ export const convertHyperlinks = (rawText: string): HTMLSpanElement => {
   return element;
 };
 
-export const getNote = (note: string | any[]): string => {
+export const getNote = (note: string | any[]): string | undefined => {
   let nodes;
   if (typeof note === 'string') nodes = JSON.parse(note.substr(note.indexOf('{')))?.document?.nodes as any[];
   else nodes = note;
   return getTextFromNodes(nodes);
 };
 
-export const getTextFromNodes = (nodes: any[]): string => {
+export const getTextFromNodes = (nodes: any[]): string | undefined => {
   const results = nodes
     .map((node: any) => {
       if (node.object === 'leaf' && node.text) return node.text;
-      else if (node.leaves || node.nodes) return getNote(node.leaves || node.nodes);
+      else if (node.leaves || node.nodes) return getTextFromNodes(node.leaves || node.nodes);
     })
-    .filter((node: any) => node);
-  if (results.length) return results.join('\n');
+    .filter((node: any) => node)
+    .join('\n');
+  return results || undefined;
 };
 
 export const toTree = (data: any[]): any[] => {

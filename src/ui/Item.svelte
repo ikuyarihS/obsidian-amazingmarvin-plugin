@@ -44,7 +44,7 @@
       </div>
       {#if query.showNote && item.note && (note = getNote(item.note))}
         <blockquote class="amazing-marvin-note">
-          {@html convertHyperlinks(note).outerHTML}
+          {@html convertHyperlinks(note).outerHTML.replace(/\n/g, '<br /><br />')}
         </blockquote>
       {/if}
       {#each INHERIT_PROPS as prop}
