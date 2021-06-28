@@ -4,6 +4,13 @@
 
 This is a plugin for Obsidian (https://obsidian.md).
 
+**Note:**
+
+You will need an api token from Amazing Marvin.
+You can get one here - https://app.amazingmarvin.com/pre?api
+
+For more information, please read here - https://github.com/amazingmarvin/MarvinAPI/wiki/Marvin-API
+
 ### Examples
 
 ![image](https://user-images.githubusercontent.com/19921765/123458209-fbf5ac80-d60e-11eb-81f8-767a2fd2142c.png)
@@ -33,6 +40,7 @@ Example of a valid config:
 | hideEmpty    | Hide empty directory. Default to true.                                              | boolean                | true    |
 | inheritColor | Inherit colors from closest parent. Default to true.                                | boolean                | true    |
 | showLabel    | Whether to render labels or not. Default to true.                                   | boolean                | true    |
+| isAnimated   | Whether to animate transitions                                                      | boolean                | true    |
 
 #### Config interface
 
@@ -45,6 +53,7 @@ export interface Query {
   hideEmpty: boolean;
   inheritColor: boolean;
   showLabel: boolean;
+  isAnimated: boolean;
 }
 
 export const DEFAULT_QUERY: Query = {
@@ -53,5 +62,6 @@ export const DEFAULT_QUERY: Query = {
   hideEmpty: true,
   inheritColor: true,
   showLabel: true,
+  isAnimated: true,
 };
 ```
