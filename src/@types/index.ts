@@ -68,3 +68,11 @@ export interface Label {
   title: string;
   color: string;
 }
+
+export interface Item {
+  [key: string]: any;
+  type?: string;
+  color?: string;
+  labelIds?: string[];
+  note?: string;
+}

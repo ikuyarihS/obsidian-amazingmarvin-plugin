@@ -1,5 +1,5 @@
 import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { PluginSettings } from './@types/index';
+import type { PluginSettings } from './@types/index';
 import AmazingMarvinApi from './api';
 
 const DEFAULT_APP_SETTINGS: PluginSettings = {

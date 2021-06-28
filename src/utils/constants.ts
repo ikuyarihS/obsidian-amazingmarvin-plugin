@@ -1,4 +1,4 @@
-import { Query } from '../@types/index';
+import type { Query } from '../@types/index';
 
 export const HYPERLINK_REGEX = /\[(?<text>[^\]]+?)\]\((?<href>https?:\S+?)\)/g;
 
@@ -10,4 +10,5 @@ export const DEFAULT_QUERY: Query = {
   hideEmpty: true,
   inheritColor: true,
   showLabel: true,
+  isAnimated: true,
 };
