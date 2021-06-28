@@ -33,6 +33,7 @@ Example of a valid config:
 | hideEmpty    | Hide empty directory. Default to true.                                              | boolean                | true    |
 | inheritColor | Inherit colors from closest parent. Default to true.                                | boolean                | true    |
 | showLabel    | Whether to render labels or not. Default to true.                                   | boolean                | true    |
+| isAnimated   | Whether to animate transitions                                                      | boolean                | true    |
 
 #### Config interface
 
@@ -45,6 +46,7 @@ export interface Query {
   hideEmpty: boolean;
   inheritColor: boolean;
   showLabel: boolean;
+  isAnimated: boolean;
 }
 
 export const DEFAULT_QUERY: Query = {
@@ -53,5 +55,6 @@ export const DEFAULT_QUERY: Query = {
   hideEmpty: true,
   inheritColor: true,
   showLabel: true,
+  isAnimated: true,
 };
 ```
