@@ -1,6 +1,8 @@
 <script lang="ts">
   import { faFlag, faFolder, faInbox } from '@fortawesome/free-solid-svg-icons';
   import Icon from 'svelte-awesome';
+  import { quintOut } from 'svelte/easing';
+  import { fade, fly } from 'svelte/transition';
   import type { Item, Label, Query } from '../@types';
   import { convertHyperlinks, getNote } from '../utils';
   import { INHERIT_PROPS } from '../utils/constants';
@@ -18,9 +20,13 @@
   let note;
 </script>
 
-<ul class="amazing-marvin-list">
-  {#each items as item}
-    <li class="amazing-marvin-list-item{query.isAnimated ? '-animated' : ''}">
+<ul class="amazing-marvin-list" in:fly={{ x: 100, duration: 450, easing: quintOut }} out:fade>
+  {#each items as item, index}
+    <li
+      class="amazing-marvin-list-item"
+      in:fly={{ x: 100, duration: 450, delay: 100 * index, easing: quintOut }}
+      out:fade
+    >
       <div class="amazing-marvin-title-container">
         {#if item.type}
           <Icon class="amazing-marvin-title-icon" data={ICONS[item.type]} style="fill: {item.color || 'white'}" />

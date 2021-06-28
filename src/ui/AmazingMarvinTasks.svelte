@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Label, Query } from '../@types';
+  import ErrorDisplay from './ErrorDisplay.svelte';
   import Item from './Item.svelte';
 
   export let query: Query;
@@ -10,13 +11,17 @@
   let items: Item[] = [];
   let labelsMap: Record<string, Label>;
 
+  let error: Error;
   let promise = get();
 
   async function get() {
     isLoading = true;
+    error = undefined;
     try {
       items.length = 0;
       [items, labelsMap] = await getData(query, api);
+    } catch (err) {
+      error = err;
     } finally {
       isLoading = false;
     }
@@ -38,5 +43,8 @@
     {#await promise}
       <Item {query} {items} labels={labelsMap} />
     {/await}
+  {/if}
+  {#if error}
+    <ErrorDisplay {error} />
   {/if}
 </div>
