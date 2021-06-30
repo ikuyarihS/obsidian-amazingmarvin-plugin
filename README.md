@@ -11,7 +11,7 @@ You can get one here - https://app.amazingmarvin.com/pre?api
 
 For more information, please read here - https://github.com/amazingmarvin/MarvinAPI/wiki/Marvin-API
 
-### Examples
+## Examples
 
 ![image](https://user-images.githubusercontent.com/19921765/123458209-fbf5ac80-d60e-11eb-81f8-767a2fd2142c.png)
 
@@ -65,3 +65,10 @@ export const DEFAULT_QUERY: Query = {
   isAnimated: true,
 };
 ```
+
+## Support
+If you find this plugin valuable, please let me know! It is great to hear from people who use what I've built. If you really like this plugin and want to express that by buying me a coffee, please do!
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K352ZLD)
+
+_Please don't ever feel obligated!_
