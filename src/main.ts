@@ -1,10 +1,26 @@
-import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import type { PluginSettings } from './@types/index';
+import { addIcon, App, Plugin, PluginManifest } from 'obsidian';
+import type { AmazingMarvinPlugin, PluginSettings } from './@types/index';
 import AmazingMarvinApi from './api';
+import { icons } from './icons';
+import SettingTab from './settings';
+import { LeafViewType } from './@types/index';
+import { LeafView } from './leaf';
+import FileManager from './fileManager';
 
 const DEFAULT_APP_SETTINGS: PluginSettings = {
   apiToken: '',
   fullAccessToken: '',
+  showRibbon: true,
+  ribbonQuery: {
+    title: '',
+    type: 'due-today',
+    hideEmpty: true,
+    showLabel: true,
+    showNote: false,
+    isAnimated: true,
+    colorTitle: true,
+    inheritColor: true,
+  },
 };
 
 /**
@@ -12,19 +28,38 @@ const DEFAULT_APP_SETTINGS: PluginSettings = {
  * @class AmazingMarvinPlugin
  * @extends {Plugin}
  */
-export default class AmazingMarvinPlugin extends Plugin {
+export default class MyPlugin extends Plugin implements AmazingMarvinPlugin {
   settings: PluginSettings;
   amazingMarvinApi: AmazingMarvinApi;
+  fileManager: FileManager;
+  ribbon: HTMLElement;
+  leafView: LeafView;
+
+  /**
+   * Creates an instance of MyPlugin.
+   * @param {App} app
+   * @param {PluginManifest} manifest
+   * @memberof MyPlugin
+   */
+  constructor(app: App, manifest: PluginManifest) {
+    super(app, manifest);
+    this.amazingMarvinApi = new AmazingMarvinApi();
+    this.fileManager = new FileManager(this);
+  }
 
   /**
    * @memberof AmazingMarvinPlugin
    */
   async onload(): Promise<void> {
     await this.loadSettings();
-    this.amazingMarvinApi = new AmazingMarvinApi(this.settings.apiToken);
+    this.amazingMarvinApi.changeToken(this.settings.apiToken);
 
+    this.registerView(LeafViewType, leaf => (this.leafView = new LeafView(leaf, this)));
     this.registerMarkdownPostProcessor(this.amazingMarvinApi.parseCodeblock.bind(this.amazingMarvinApi));
     this.addSettingTab(new SettingTab(this.app, this));
+
+    addIcon('amazing-marvin-ribbon', icons.ribbon);
+    this.showRibbon(this.settings.showRibbon);
 
     console.log('Amazing Marvin plugin loaded');
   }
@@ -49,55 +84,38 @@ export default class AmazingMarvinPlugin extends Plugin {
   async saveSettings(): Promise<void> {
     await this.saveData(this.settings);
   }
-}
-
-/**
- * @class SettingTab
- * @extends {PluginSettingTab}
- */
-class SettingTab extends PluginSettingTab {
-  plugin: AmazingMarvinPlugin;
 
   /**
-   * Creates an instance of SettingTab.
-   * @param {App} app
-   * @param {AmazingMarvinPlugin} plugin
-   * @memberof SettingTab
+   * @param {boolean} value
+   * @memberof AmazingMarvinPlugin
    */
-  constructor(app: App, plugin: AmazingMarvinPlugin) {
-    super(app, plugin);
-    this.plugin = plugin;
+  showRibbon(value: boolean): void {
+    if (value) {
+      this.ribbon = this.addRibbonIcon('amazing-marvin-ribbon', 'Amazing Marvin', () => {
+        this.toggleLeafView();
+      });
+    } else if (this.ribbon) {
+      this.ribbon.remove();
+    }
   }
 
   /**
-   * @memberof SettingTab
+   * @private
+   * @return {Promise<void>}
+   * @memberof MyPlugin
    */
-  display(): void {
-    const { containerEl } = this;
+  private async toggleLeafView(): Promise<void> {
+    const existing = this.app.workspace.getLeavesOfType(LeafViewType);
+    if (existing.length) {
+      this.app.workspace.revealLeaf(existing[0]);
+      return;
+    }
 
-    containerEl.empty();
-
-    containerEl.createEl('h2', { text: 'Amazing Marvin API settings' });
-    const description = containerEl.createEl('p', {
-      text: 'Configure API tokens to interact with Amazing Marvin API.',
-    });
-    description.createEl('br');
-    description.createEl('span', { text: 'For more information, please go here - ' });
-    description.createEl('a', {
-      text: 'https://github.com/amazingmarvin/MarvinAPI/wiki/Marvin-API',
-      href: 'https://github.com/amazingmarvin/MarvinAPI/wiki/Marvin-API',
+    await this.app.workspace.getRightLeaf(false).setViewState({
+      type: LeafViewType,
+      active: true,
     });
 
-    new Setting(containerEl).setName('apiToken').addText(text =>
-      text
-        .setPlaceholder('Enter your apiToken')
-        .setValue(this.plugin.settings.apiToken)
-        .onChange(async apiToken => {
-          const apiTokenTrimmed = apiToken.trim();
-          this.plugin.settings.apiToken = apiTokenTrimmed;
-          this.plugin.amazingMarvinApi.changeToken(apiTokenTrimmed);
-          await this.plugin.saveSettings();
-        })
-    );
+    this.app.workspace.revealLeaf(this.app.workspace.getLeavesOfType(LeafViewType)[0]);
   }
 }
