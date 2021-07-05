@@ -75,13 +75,16 @@ const isEmpty = (item: any): boolean => {
   return (item.children || []).every((child: any) => isEmpty(child));
 };
 
-export const parseIntoNotes = (items: any[], depth = 0, current: string[] = undefined): string[] => {
-  current = current || [];
-  items.map(item => {
-    current.push(`${' '.repeat(depth * 2)}- [ ] ${EMOJIS[item.type] || ''}${item.title}`);
-    INHERIT_PROPS.map(prop => {
-      if (item[prop]?.length > 0) parseIntoNotes(item[prop], depth + 1, current);
-    });
-  });
-  return current;
+export const parseIntoNotes = (items: any[], depth = 0): string[] => {
+  return items.reduce(
+    (current, item) => [
+      ...current,
+      `${' '.repeat(depth * 2)}- [ ] ${EMOJIS[item.type] || ''}${item.title}`,
+      ...INHERIT_PROPS.filter(prop => item[prop]?.length > 0).reduce(
+        (initial, prop) => [...initial, ...parseIntoNotes(item[prop], depth + 1)],
+        []
+      ),
+    ],
+    []
+  );
 };
