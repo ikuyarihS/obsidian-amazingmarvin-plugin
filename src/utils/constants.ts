@@ -12,3 +12,9 @@ export const DEFAULT_QUERY: Query = {
   showLabel: true,
   isAnimated: true,
 };
+
+export const EMOJIS: { [key: string]: string } = {
+  category: '📁',
+  project: '🏳️',
+  inbox: '📥',
+};
