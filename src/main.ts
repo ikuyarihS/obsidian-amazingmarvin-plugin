@@ -1,27 +1,13 @@
-import { addIcon, App, Plugin, PluginManifest } from 'obsidian';
+import { addIcon, App, Notice, Plugin, PluginManifest } from 'obsidian';
 import type { AmazingMarvinPlugin, PluginSettings } from './@types/index';
-import AmazingMarvinApi from './api';
-import { icons } from './icons';
-import SettingTab from './settings';
 import { LeafViewType } from './@types/index';
-import { LeafView } from './leaf';
+import AmazingMarvinApi from './api';
 import FileManager from './fileManager';
-
-const DEFAULT_APP_SETTINGS: PluginSettings = {
-  apiToken: '',
-  fullAccessToken: '',
-  showRibbon: true,
-  ribbonQuery: {
-    title: '',
-    type: 'due-today',
-    hideEmpty: true,
-    showLabel: true,
-    showNote: false,
-    isAnimated: true,
-    colorTitle: true,
-    inheritColor: true,
-  },
-};
+import { icons } from './icons';
+import { LeafView } from './leaf';
+import DailyNoteModal from './modals/dailyNotes';
+import SettingTab from './settings';
+import { DEFAULT_APP_SETTINGS } from './utils/constants';
 
 /**
  * @export
@@ -57,6 +43,19 @@ export default class MyPlugin extends Plugin implements AmazingMarvinPlugin {
     this.registerView(LeafViewType, leaf => (this.leafView = new LeafView(leaf, this)));
     this.registerMarkdownPostProcessor(this.amazingMarvinApi.parseCodeblock.bind(this.amazingMarvinApi));
     this.addSettingTab(new SettingTab(this.app, this));
+
+    this.addCommand({
+      id: 'scheduled-daily-note',
+      name: 'Add scheduled tasks to daily note',
+      checkCallback: (checking: boolean) => {
+        if (!checking) {
+          this.settings.showRibbon
+            ? new DailyNoteModal(this).open()
+            : new Notice('Please enable ribbon to use this command!');
+        }
+        return checking;
+      },
+    });
 
     addIcon('amazing-marvin-ribbon', icons.ribbon);
     this.showRibbon(this.settings.showRibbon);
