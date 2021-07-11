@@ -1,11 +1,13 @@
 .amazing-marvin-container {
   padding-left: 3%;
 }
+.modal-button-container .button,
 .amazing-marvin-container .button-group .button {
   display: inline-flex;
   border: 1px solid;
   padding: 1%;
 }
+.modal-button-container .icon,
 .amazing-marvin-container .button-group .icon {
   fill: var(--text-normal);
   margin-right: 5px;
