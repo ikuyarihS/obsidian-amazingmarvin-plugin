@@ -1,7 +1,6 @@
 import { Editor, ItemView, MarkdownView, WorkspaceLeaf } from 'obsidian';
 import { AmazingMarvinPlugin, LeafViewType } from './@types/index';
 import AmazingMarvinTasks from './ui/AmazingMarvinTasks.svelte';
-import { dailyNotes } from './stores';
 
 /**
  * @export
@@ -11,6 +10,7 @@ import { dailyNotes } from './stores';
 export class LeafView extends ItemView {
   editor: Editor;
   plugin: AmazingMarvinPlugin;
+  content: AmazingMarvinTasks = null;
 
   /**
    * Creates an instance of LeafView.
@@ -68,7 +68,8 @@ export class LeafView extends ItemView {
   public async draw(): Promise<void> {
     if (this.plugin.settings.showRibbon) {
       this.containerEl.show();
-      new AmazingMarvinTasks({
+      this.content?.$destroy();
+      this.content = new AmazingMarvinTasks({
         target: this.contentEl,
         props: {
           query: this.plugin.settings.ribbonQuery,

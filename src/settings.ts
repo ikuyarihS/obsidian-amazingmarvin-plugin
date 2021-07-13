@@ -73,7 +73,7 @@ export default class SettingTab extends PluginSettingTab {
           })
           .setValue(this.plugin.settings.ribbonQuery.type)
           .onChange(async (value: 'today' | 'due-today') => {
-            this.plugin.settings.ribbonQuery.type = value;
+            this.plugin.settings.ribbonQuery = { ...this.plugin.settings.ribbonQuery, type: value };
             this.isRibbonSettingChanged = true;
             await this.plugin.saveSettings();
           });

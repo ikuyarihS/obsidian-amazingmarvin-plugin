@@ -90,9 +90,7 @@ export default class MyPlugin extends Plugin implements AmazingMarvinPlugin {
    */
   showRibbon(value: boolean): void {
     if (value) {
-      this.ribbon = this.addRibbonIcon('amazing-marvin-ribbon', 'Amazing Marvin', () => {
-        this.toggleLeafView();
-      });
+      this.ribbon = this.addRibbonIcon('amazing-marvin-ribbon', 'Amazing Marvin', () => this.toggleLeafView());
     } else if (this.ribbon) {
       this.ribbon.remove();
     }
