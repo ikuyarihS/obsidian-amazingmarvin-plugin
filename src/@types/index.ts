@@ -1,12 +1,32 @@
+import type { Plugin } from 'obsidian';
+import type AmazingMarvinApi from '../api';
+import type FileManager from '../fileManager';
+import type { LeafView } from '../leaf';
+
+export const LeafViewType = 'amazing-marvin-leaf';
+
+export interface AmazingMarvinPlugin extends Plugin {
+  settings: PluginSettings;
+  amazingMarvinApi: AmazingMarvinApi;
+  fileManager: FileManager;
+  ribbon: HTMLElement;
+  leafView: LeafView;
+
+  saveSettings: () => Promise<void>;
+  showRibbon: (value: boolean) => void;
+}
+
 export interface PluginSettings {
   apiToken: string;
   fullAccessToken: string;
+  showRibbon: boolean;
+  ribbonQuery: Query;
 }
 
 export interface Query {
   title?: string;
   type?: 'today' | 'due-today';
-  showNote: boolean;
+  showNote?: boolean;
   colorTitle: boolean;
   hideEmpty: boolean;
   inheritColor: boolean;

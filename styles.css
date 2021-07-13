@@ -1,9 +1,34 @@
+.amazing-marvin-container {
+  padding-left: 3%;
+}
+.modal-button-container .button,
+.amazing-marvin-container .button-group .button {
+  display: inline-flex;
+  border: 1px solid;
+  padding: 1%;
+}
+.modal-button-container .icon,
+.amazing-marvin-container .button-group .icon {
+  fill: var(--text-normal);
+  margin-right: 5px;
+}
+.amazing-marvin-container .button-group .span {
+  font-style: italic;
+  font-size: small;
+  margin-left: 2%;
+}
+
+.workspace-leaf-content .amazing-marvin-container {
+  user-select: text !important;
+  overflow: auto !important;
+}
+
 .amazing-marvin-title-container {
   display: flex;
   align-items: center;
 }
-
 .amazing-marvin-title-container .amazing-marvin-label {
+  user-select: none !important;
   font-size: 75%;
   display: flex;
   align-items: center;
@@ -22,4 +47,13 @@
 
 .amazing-marvin-title-icon {
   margin-right: 5px;
+}
+
+.amazing-marvin-setting-header {
+  padding-bottom: 3%;
+}
+
+.amazing-marvin-setting-footer {
+  text-align: center;
+  border-top: 1px solid var(--background-modifier-border);
 }

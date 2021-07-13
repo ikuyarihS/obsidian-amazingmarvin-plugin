@@ -1,4 +1,4 @@
-import { HYPERLINK_REGEX, INHERIT_PROPS } from './constants';
+import { EMOJIS, HYPERLINK_REGEX, INHERIT_PROPS } from './constants';
 
 export const convertHyperlinks = (rawText: string): HTMLSpanElement => {
   const element = document.createElement('span');
@@ -73,4 +73,18 @@ const isEmpty = (item: any): boolean => {
   if (item.db === 'Tasks') return false;
   if (item.tasks?.length > 0) return false;
   return (item.children || []).every((child: any) => isEmpty(child));
+};
+
+export const parseIntoNotes = (items: any[], depth = 0): string[] => {
+  return items.reduce(
+    (current, item) => [
+      ...current,
+      `${' '.repeat(depth * 2)}- [ ] ${EMOJIS[item.type] || ''}${item.title}`,
+      ...INHERIT_PROPS.filter(prop => item[prop]?.length > 0).reduce(
+        (initial, prop) => [...initial, ...parseIntoNotes(item[prop], depth + 1)],
+        []
+      ),
+    ],
+    []
+  );
 };

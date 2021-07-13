@@ -89,7 +89,7 @@ class AmazingMarvinApi {
    * @return {Promise<any[]>}
    * @memberof AmazingMarvinApi
    */
-  private async getData(query: Query, api: string): Promise<any[]> {
+  public async getData(query: Query, api: string): Promise<any[]> {
     let getLabelsTask = undefined;
     if (query.showLabel) getLabelsTask = this.get('labels');
     const [tasks, categories] = await Promise.all([this.get(api, 'Tasks'), this.getCategories()]);
@@ -119,11 +119,10 @@ class AmazingMarvinApi {
   /**
    * @param {HTMLElement} el
    * @param {Query} query
-   * @param {string} api
    * @return {Promise<void>}
    * @memberof AmazingMarvinApi
    */
-  async renderTasks(el: HTMLElement, query: Query, api: string): Promise<void> {
+  async renderTasks(el: HTMLElement, query: Query): Promise<void> {
     el.innerText = '';
     const getData = this.getData.bind(this);
     new AmazingMarvinTasks({
@@ -131,10 +130,25 @@ class AmazingMarvinApi {
       props: {
         query: query,
         getData: getData,
-        api: api,
+        api: this.getApiFromType(query.type),
       },
     });
   }
+
+  /**
+   * @param {('today' | 'due-today')} type
+   * @return {(string | undefined)}
+   */
+  getApiFromType = (type: 'today' | 'due-today'): string | undefined => {
+    switch (type) {
+      case 'today':
+        return 'todayItems';
+      case 'due-today':
+        return 'dueItems';
+      default:
+        throw new Error('No type specified');
+    }
+  };
 
   /**
    * @param {HTMLElement} el
@@ -148,16 +162,7 @@ class AmazingMarvinApi {
       if (!node) return;
       try {
         const query = Object.assign({}, DEFAULT_QUERY, JSON.parse(node.innerText)) as Query;
-        switch (query.type) {
-          case 'today':
-            await this.renderTasks(el, query, 'todayItems');
-            break;
-          case 'due-today':
-            await this.renderTasks(el, query, 'dueItems');
-            break;
-          default:
-            throw new Error('No type specified');
-        }
+        await this.renderTasks(el, query);
       } catch (err) {
         new ErrorDisplay({ target: el, props: { error: err } });
         throw err;
