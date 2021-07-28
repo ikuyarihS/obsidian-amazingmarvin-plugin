@@ -111,7 +111,16 @@ class AmazingMarvinApi {
     let items = [...categoriesTree, ...unassignedTasks];
     if (query.hideEmpty) items = hideEmpty(items);
     if (query.inheritColor) inherit(items, ['color']);
-    const labels = getLabelsTask ? await getLabelsTask : [];
+
+    let labels = [];
+    if (getLabelsTask) {
+      try {
+        labels = await getLabelsTask;
+      } catch (e) {
+        console.log('Got error when getting labels, however we will ignore this one to let the plugin continue.');
+      }
+    }
+
     const labelsMap = labels.reduce((map: Record<string, Label>, label: Label) => ({ ...map, [label._id]: label }), {});
     return [items, labelsMap];
   }
