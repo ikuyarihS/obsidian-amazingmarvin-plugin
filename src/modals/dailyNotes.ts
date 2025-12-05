@@ -28,7 +28,7 @@ export default class DailyNoteModal extends Modal {
     new DailyNoteCommand({
       target: contentEl,
       props: {
-        handleCancel: this.close,
+        handleCancel: () => this.close(),
         handleCreate: async (query: Query, api: string) => {
           await this.plugin.fileManager.openOrCreateDailyNote(moment(), query, api);
           this.close();

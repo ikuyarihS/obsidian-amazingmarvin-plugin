@@ -1,5 +1,7 @@
-import { Editor, ItemView, MarkdownView, WorkspaceLeaf } from 'obsidian';
-import { AmazingMarvinPlugin, LeafViewType } from './@types/index';
+import type { Editor } from 'obsidian';
+import { ItemView, MarkdownView, WorkspaceLeaf } from 'obsidian';
+import type { AmazingMarvinPlugin } from './@types/index';
+import { LeafViewType } from './@types/index';
 import AmazingMarvinTasks from './ui/AmazingMarvinTasks.svelte';
 
 /**
@@ -11,6 +13,7 @@ export class LeafView extends ItemView {
   editor: Editor;
   plugin: AmazingMarvinPlugin;
   content: AmazingMarvinTasks = null;
+  private activeLeafWatcherRegistered = false;
 
   /**
    * Creates an instance of LeafView.
@@ -50,14 +53,23 @@ export class LeafView extends ItemView {
   /**
    * @memberof LeafView
    */
-  public load(): void {
-    super.load();
+  public async onOpen(): Promise<void> {
+    await super.onOpen();
 
-    this.app.workspace.on('active-leaf-change', leaf => {
-      if (leaf.view instanceof MarkdownView) this.editor = leaf.view.editor;
-    });
+    if (!this.activeLeafWatcherRegistered) {
+      this.plugin.registerEvent(
+        this.app.workspace.on('active-leaf-change', leaf => {
+          if (leaf.view instanceof MarkdownView) this.editor = leaf.view.editor;
+        })
+      );
+      this.activeLeafWatcherRegistered = true;
+    }
 
     this.draw();
+  }
+
+  public async onClose(): Promise<void> {
+    this.content?.$destroy();
   }
 
   /**
@@ -67,7 +79,7 @@ export class LeafView extends ItemView {
    */
   public async draw(): Promise<void> {
     if (this.plugin.settings.showRibbon) {
-      this.containerEl.show();
+      this.containerEl.style.display = '';
       this.content?.$destroy();
       this.content = new AmazingMarvinTasks({
         target: this.contentEl,
@@ -79,7 +91,7 @@ export class LeafView extends ItemView {
         },
       });
     } else {
-      this.containerEl.hide();
+      this.containerEl.style.display = 'none';
     }
   }
 }

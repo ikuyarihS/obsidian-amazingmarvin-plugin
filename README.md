@@ -11,6 +11,12 @@ You can get one here - https://app.amazingmarvin.com/pre?api
 
 For more information, please read here - https://github.com/amazingmarvin/MarvinAPI/wiki/Marvin-API
 
+## Compatibility
+
+- Minimum Obsidian version: **1.10.3**
+- Plugin version: **0.3.2**
+
+
 ## Examples
 
 ![image](https://user-images.githubusercontent.com/19921765/123458209-fbf5ac80-d60e-11eb-81f8-767a2fd2142c.png)

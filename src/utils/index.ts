@@ -2,15 +2,17 @@ import { EMOJIS, HYPERLINK_REGEX, INHERIT_PROPS } from './constants';
 
 export const convertHyperlinks = (rawText: string): HTMLSpanElement => {
   const element = document.createElement('span');
-  let match;
-  let index = 0;
-  while ((match = HYPERLINK_REGEX.exec(rawText))) {
-    const [_, text, href] = [...match];
-    element.appendText(rawText.substring(index, match.index));
-    index = match.index;
+  const regex = new RegExp(HYPERLINK_REGEX.source, 'g');
+  let lastIndex = 0;
+  for (const match of rawText.matchAll(regex)) {
+    const text = match.groups?.text ?? match[1];
+    const href = match.groups?.href ?? match[2];
+    element.appendText(rawText.substring(lastIndex, match.index ?? 0));
     element.createEl('a', { text: text, href: href });
+    lastIndex = (match.index ?? 0) + (match[0]?.length ?? 0);
   }
-  if (index === 0) element.appendText(rawText);
+  if (lastIndex === 0) element.appendText(rawText);
+  else if (lastIndex < rawText.length) element.appendText(rawText.substring(lastIndex));
   return element;
 };
 

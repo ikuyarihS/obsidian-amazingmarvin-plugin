@@ -1,4 +1,5 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
+import type { App } from 'obsidian';
+import { PluginSettingTab, Setting } from 'obsidian';
 import type { AmazingMarvinPlugin } from './@types';
 import SettingFooter from './ui/settings/Footer.svelte';
 import SettingHeader from './ui/settings/Header.svelte';
@@ -9,7 +10,7 @@ import SettingHeader from './ui/settings/Header.svelte';
  */
 export default class SettingTab extends PluginSettingTab {
   plugin: AmazingMarvinPlugin;
-  private isRibbonSettingChanged: boolean;
+  private isRibbonSettingChanged: boolean = false;
 
   /**
    * Creates an instance of SettingTab.
@@ -54,13 +55,13 @@ export default class SettingTab extends PluginSettingTab {
         toggle.setValue(this.plugin.settings.showRibbon).onChange(async isShowRibbon => {
           this.plugin.settings.showRibbon = isShowRibbon;
           this.plugin.showRibbon(isShowRibbon);
-          isShowRibbon ? ribbonQuerySetting.settingEl.show() : ribbonQuerySetting.settingEl.hide();
+          isShowRibbon ? (ribbonQuerySetting.settingEl.style.display = '') : (ribbonQuerySetting.settingEl.style.display = 'none');
           await this.plugin.saveSettings();
         });
       });
 
     const ribbonQuerySetting = new Setting(containerEl).setName("Ribbon's Query").setDesc('The query for the ribbon');
-    this.plugin.settings.showRibbon ? ribbonQuerySetting.settingEl.show() : ribbonQuerySetting.settingEl.hide();
+    this.plugin.settings.showRibbon ? (ribbonQuerySetting.settingEl.style.display = '') : (ribbonQuerySetting.settingEl.style.display = 'none');
 
     ribbonQuerySetting.controlEl.style.display = 'inline';
     new Setting(ribbonQuerySetting.controlEl.createDiv('amazing-marvin-ribbon-query-setting-dropdown'))

@@ -14,8 +14,11 @@
   async function create() {
     isCreating = true;
     query.type = api === 'todayItems' ? 'today' : 'due-today';
-    await handleCreate(query, api).finally;
-    isCreating = false;
+    try {
+      await handleCreate(query, api);
+    } finally {
+      isCreating = false;
+    }
   }
 </script>
 

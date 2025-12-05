@@ -1,4 +1,5 @@
-import { App, Modal } from 'obsidian';
+import type { App } from 'obsidian';
+import { Modal } from 'obsidian';
 import Confirmation from '../ui/modals/Confirmation.svelte';
 
 interface IConfirmationDialogParams {
@@ -30,7 +31,7 @@ export class ConfirmationModal extends Modal {
         title: title,
         description: text,
         cta: cta,
-        handleCancel: this.close,
+        handleCancel: () => this.close(),
         handleCreate: async (e: Event) => {
           await onAccept(e);
           this.close();
@@ -44,10 +45,6 @@ export class ConfirmationModal extends Modal {
  * @export
  * @param {IConfirmationDialogParams} { cta, onAccept, text, title }
  */
-export function createConfirmationDialog({ cta, onAccept, text, title }: IConfirmationDialogParams): void {
-  new ConfirmationModal(
-    // @ts-expect-error: Property 'app' does not exist on type 'Window & typeof globalThis'.ts(2339)
-    window.app,
-    { cta, onAccept, text, title }
-  ).open();
+export function createConfirmationDialog(app: App, { cta, onAccept, text, title }: IConfirmationDialogParams): void {
+  new ConfirmationModal(app, { cta, onAccept, text, title }).open();
 }

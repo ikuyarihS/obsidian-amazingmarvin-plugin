@@ -1,12 +1,21 @@
 {
   "compilerOptions": {
     "module": "ESNext",
-    "target": "es6",
+    "target": "es2020",
+    "lib": ["es2020", "dom"],
+    "moduleResolution": "node",
+    "isolatedModules": true,
     "allowJs": true,
     "noImplicitAny": true,
     "importHelpers": true,
-    "types": ["node", "svelte"]
+    "types": ["node", "svelte"],
+    "skipLibCheck": true,
+
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false
   },
-  "include": ["**/*.ts", "ts-missing-modules.d.ts"],
-  "extends": "@tsconfig/svelte/tsconfig.json"
+  "include": ["src/**/*", "src/**/*.svelte", "**/*.ts", "**/*.svelte", "ts-missing-modules.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }

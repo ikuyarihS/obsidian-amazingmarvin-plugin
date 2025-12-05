@@ -1,4 +1,5 @@
-import { addIcon, App, Notice, Plugin, PluginManifest } from 'obsidian';
+import { addIcon, Notice, Plugin } from 'obsidian';
+import type { App, PluginManifest } from 'obsidian';
 import type { AmazingMarvinPlugin, PluginSettings } from './@types/index';
 import { LeafViewType } from './@types/index';
 import AmazingMarvinApi from './api';
@@ -67,6 +68,13 @@ export default class MyPlugin extends Plugin implements AmazingMarvinPlugin {
    * @memberof AmazingMarvinPlugin
    */
   onunload(): void {
+    // Detach view leaves created by this plugin on unload
+    this.app.workspace.detachLeavesOfType(LeafViewType);
+    // Remove ribbon if it was created
+    if (this.ribbon) {
+      this.ribbon.remove();
+      this.ribbon = null;
+    }
     console.log('Amazing Marvin plugin unloaded');
   }
 

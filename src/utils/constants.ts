@@ -1,6 +1,6 @@
 import type { PluginSettings, Query } from '../@types/index';
 
-export const HYPERLINK_REGEX = /\[(?<text>[^\]]+?)\]\((?<href>https?:\S+?)\)/g;
+export const HYPERLINK_REGEX = /\[(?<text>[^\]]+?)\]\((?<href>https?:\S+?)\)/i;
 
 export const INHERIT_PROPS = ['children', 'tasks', 'subtasks'];
 

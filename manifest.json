@@ -1,8 +1,9 @@
 {
   "id": "obsidian-amazingmarvin-plugin",
   "name": "Amazing Marvin",
-  "version": "0.3.1",
-  "minAppVersion": "0.9.12",
+  "version": "0.3.2",
+  "main": "main.js",
+  "minAppVersion": "1.10.3",
   "description": "This is a plugin for Obsidian (https://obsidian.md) for Amazing Marvin (https://app.amazingmarvin.com/)",
   "author": "Shirayuki Nekomata",
   "authorUrl": "https://github.com/ikuyarihS",
