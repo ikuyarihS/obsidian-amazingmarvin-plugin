@@ -181,6 +181,34 @@ class AmazingMarvinApi {
     (async () => {
       const node = el.querySelector<HTMLPreElement>('code[class*="language-amazingmarvin"]');
       if (!node) return;
+
+      // In Live Preview the context includes an editor. We should avoid rendering if the
+      // cursor is currently inside the code block so the author can edit the block comfortably.
+      const isLivePreview = !!(ctx as any).editor;
+      let shouldRender = true;
+      if (isLivePreview) {
+        try {
+          const editor = (ctx as any).editor as any;
+          const sectionInfo = (ctx as any).getSectionInfo?.(node) as any;
+          const cursor = editor?.getCursor?.();
+          // Find numeric start/end lines if available
+          const startLine = sectionInfo?.lineStart ?? sectionInfo?.firstLine ?? sectionInfo?.from?.line ?? sectionInfo?.start?.line ?? sectionInfo?.start;
+          const endLine = sectionInfo?.lineEnd ?? sectionInfo?.lastLine ?? sectionInfo?.to?.line ?? sectionInfo?.end?.line ?? sectionInfo?.end;
+          if (typeof startLine === 'number' && typeof endLine === 'number' && cursor && typeof cursor.line === 'number') {
+            // Only render if the cursor is NOT inside the code block
+            shouldRender = !(cursor.line >= startLine && cursor.line <= endLine);
+          } else {
+            // If we don't have a cursor or section info, be conservative and avoid rendering in Live Preview
+            shouldRender = false;
+          }
+        } catch (e) {
+          // On any error, avoid rendering in Live Preview to avoid interfering with editing
+          shouldRender = false;
+        }
+      }
+
+      if (!shouldRender) return;
+
       try {
         const query = Object.assign({}, DEFAULT_QUERY, JSON.parse(node.innerText)) as Query;
         await this.renderTasks(el, query);
