@@ -20,8 +20,12 @@
   const fetchData = async () => {
     isLoading = true;
     try {
-      return await getData(query, api);
+      console.debug(`Fetching ${api} for query ${query?.title || query?.type || '<unnamed>'}`);
+      const result = await getData(query, api);
+      console.debug(`Fetched ${api} for query ${query?.title || query?.type || '<unnamed>'}`);
+      return result;
     } catch (err) {
+      console.error('Error in fetchData', err);
       throw err;
     } finally {
       isLoading = false;
@@ -30,7 +34,14 @@
   };
 
   const handleRefresh = async () => {
+    console.debug('handleRefresh triggered');
     promise = fetchData();
+    try {
+      await promise;
+      console.debug('handleRefresh completed');
+    } catch (err) {
+      console.error('handleRefresh error', err);
+    }
   };
 
   const handleDailyNote = async () => {
@@ -71,8 +82,10 @@
   </div>
 
   {#if !isLoading}
-    {#await promise then [items, labelsMap]}
-      <Item {query} {items} labels={labelsMap} />
+    {#await promise then res}
+      {#if res}
+        <Item {query} items={res[0] || []} labels={res[1] || {}} />
+      {/if}
     {:catch error}
       <ErrorDisplay {error} />
     {/await}

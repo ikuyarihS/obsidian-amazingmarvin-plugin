@@ -14,6 +14,7 @@ const INBOX_CATEGORY = { _id: 'unassigned', title: 'Inbox', type: 'inbox', child
  */
 class AmazingMarvinApi {
   apiToken: string;
+  activeControllers: Record<string, AbortController | null> = {};
 
   /**
    * Creates an instance of AmazingMarvinApi.
@@ -40,13 +41,48 @@ class AmazingMarvinApi {
    * @memberof AmazingMarvinApi
    */
   async get(api: string, dataType?: string): Promise<any | undefined> {
-    const response = await fetch(`${base}/${api}`, {
-      method: 'GET',
-      headers: {
-        'X-API-Token': this.apiToken,
-      },
-    });
+    // Add timeout to prevent hanging fetches from blocking the plugin
+    // Also abort any in-flight request for the same API to avoid queueing and blocking
+    if (this.activeControllers[api]) {
+      try {
+        this.activeControllers[api]?.abort();
+      } catch (e) {
+        // ignore
+      }
+      this.activeControllers[api] = null;
+    }
+    const controller = new AbortController();
+    this.activeControllers[api] = controller;
+    const timeoutMs = 15000; // 15 seconds
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    let response;
+    try {
+      response = await fetch(`${base}/${api}`, {
+        method: 'GET',
+        headers: {
+          'X-API-Token': this.apiToken,
+        },
+        signal: controller.signal,
+      });
+    } catch (e) {
+      // Map abort to a friendly error and rethrow
+      if ((e as any)?.name === 'AbortError') {
+        throw new Error('Request aborted due to timeout');
+      }
+      throw e;
+    } finally {
+      clearTimeout(timeout);
+      // clear this request's controller so subsequent requests can run
+      if (this.activeControllers[api] === controller) this.activeControllers[api] = null;
+    }
     if (!response.ok) throw new Error('wrong apiToken or api url');
+    try {
+      // Try to parse response as JSON
+      const debugData = await response.clone().json().catch(() => null as any);
+      console.debug(`[AmazingMarvinApi] GET ${api} => ok (preview: ${JSON.stringify(debugData ? (Array.isArray(debugData) ? debugData?.length : 'object') : 'not json')})`);
+    } catch (e) {
+      /* ignore debug logging failures */
+    }
     let data = await response.json();
     // Normalize subtasks: convert object maps to arrays and handle null/undefined safely
     data.forEach((item: Task | Category) => {
