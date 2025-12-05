@@ -105,7 +105,13 @@ export default class SettingTab extends PluginSettingTab {
     super.hide();
 
     if (this.isRibbonSettingChanged) {
-      this.plugin.leafView.draw();
+      try {
+        if (this.plugin.leafView && typeof this.plugin.leafView.draw === 'function') {
+          this.plugin.leafView.draw();
+        }
+      } catch (err) {
+        console.warn('Failed to redraw leaf view after settings change', err);
+      }
       this.isRibbonSettingChanged = false;
     }
   }
