@@ -48,9 +48,21 @@ class AmazingMarvinApi {
     });
     if (!response.ok) throw new Error('wrong apiToken or api url');
     let data = await response.json();
-    data
-      .filter((item: Task | Category) => item.hasOwnProperty('subtasks'))
-      .forEach((item: Task) => (item.subtasks = Object.values(item.subtasks)));
+    // Normalize subtasks: convert object maps to arrays and handle null/undefined safely
+    data.forEach((item: Task | Category) => {
+      // Narrow to Task via 'subtasks' in item check
+      if (!Object.prototype.hasOwnProperty.call(item, 'subtasks')) return;
+      const task = item as Task;
+      // If subtasks is null or undefined, set to empty array
+      if (!task.subtasks) {
+        task.subtasks = [] as any;
+        return;
+      }
+      // If it's already an array, keep it
+      if (Array.isArray(task.subtasks)) return;
+      // If it's an object (map), extract values
+      task.subtasks = Object.values(task.subtasks as Record<string, any>) as any;
+    });
 
     switch (dataType?.toLowerCase()) {
       case 'task':
