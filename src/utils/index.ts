@@ -18,9 +18,18 @@ export const convertHyperlinks = (rawText: string): HTMLSpanElement => {
 
 export const getNote = (note: string | any[]): string | undefined => {
   let nodes;
-  if (typeof note === 'string') nodes = JSON.parse(note.substr(note.indexOf('{')))?.document?.nodes as any[];
-  else nodes = note;
-  return getTextFromNodes(nodes);
+  if (typeof note === 'string') {
+    try {
+      const jsonStart = note.indexOf('{');
+      if (jsonStart === -1) return undefined;
+      nodes = JSON.parse(note.substr(jsonStart))?.document?.nodes as any[];
+    } catch (e) {
+      return undefined;
+    }
+  } else {
+    nodes = note;
+  }
+  return nodes ? getTextFromNodes(nodes) : undefined;
 };
 
 export const getTextFromNodes = (nodes: any[]): string | undefined => {

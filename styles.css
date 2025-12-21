@@ -1,6 +1,144 @@
 .amazing-marvin-container {
   padding-left: 3%;
 }
+
+.amazing-marvin-leaf-root {
+  padding: 0 10px 12px;
+}
+
+.amazing-marvin-leaf-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0 10px;
+  padding-left: 3%;
+}
+
+.amazing-marvin-leaf-tab {
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.amazing-marvin-leaf-tab.is-active {
+  border-color: var(--text-accent);
+  background: var(--background-primary);
+}
+
+.amazing-marvin-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 10px 10px;
+}
+
+.amazing-marvin-calendar-toolbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.amazing-marvin-calendar-nav,
+.amazing-marvin-calendar-view-toggle {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.amazing-marvin-calendar-title {
+  font-weight: 600;
+  text-align: center;
+}
+
+.amazing-marvin-calendar-view-toggle {
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+
+.amazing-marvin-calendar-view-toggle .button.is-active {
+  border-color: var(--text-accent);
+}
+
+.amazing-marvin-calendar-toolbar .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.amazing-marvin-calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.amazing-marvin-calendar-month {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.amazing-marvin-calendar-dow-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.amazing-marvin-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.amazing-marvin-calendar-day {
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  border-radius: 10px;
+  padding: 8px 0;
+  text-align: center;
+  cursor: pointer;
+}
+
+.amazing-marvin-calendar-day .dow {
+  color: var(--text-muted);
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.amazing-marvin-calendar-day .dom {
+  font-size: 14px;
+}
+
+.amazing-marvin-calendar-day.is-outside {
+  opacity: 0.45;
+}
+
+.amazing-marvin-calendar-day.is-selected {
+  border-color: var(--text-accent);
+  background: color-mix(in srgb, var(--text-accent) 10%, var(--background-secondary));
+}
+
+.amazing-marvin-calendar-day.is-today {
+  font-weight: 600;
+}
+
+.amazing-marvin-calendar-tasks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.amazing-marvin-calendar-tasks-header h3 {
+  margin: 0;
+  font-size: 14px;
+}
 .modal-button-container .button,
 .amazing-marvin-container .button-group .button {
   display: inline-flex;
@@ -16,6 +154,17 @@
   font-style: italic;
   font-size: small;
   margin-left: 2%;
+}
+
+.amazing-marvin-calendar .button-group .button {
+  display: inline-flex;
+  border: 1px solid;
+  padding: 1%;
+}
+
+.amazing-marvin-calendar .button-group .icon {
+  fill: var(--text-normal);
+  margin-right: 5px;
 }
 
 .workspace-leaf-content .amazing-marvin-container {

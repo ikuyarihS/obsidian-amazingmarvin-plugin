@@ -2,7 +2,7 @@ import type { Editor } from 'obsidian';
 import { ItemView, MarkdownView, WorkspaceLeaf } from 'obsidian';
 import type { AmazingMarvinPlugin } from './@types/index';
 import { LeafViewType } from './@types/index';
-import AmazingMarvinTasks from './ui/AmazingMarvinTasks.svelte';
+import LeafRoot from './ui/LeafRoot.svelte';
 
 /**
  * @export
@@ -12,7 +12,7 @@ import AmazingMarvinTasks from './ui/AmazingMarvinTasks.svelte';
 export class LeafView extends ItemView {
   editor: Editor;
   plugin: AmazingMarvinPlugin;
-  content: AmazingMarvinTasks = null;
+  content: LeafRoot = null;
   private activeLeafWatcherRegistered = false;
 
   /**
@@ -81,12 +81,13 @@ export class LeafView extends ItemView {
     if (this.plugin.settings.showRibbon) {
       this.containerEl.style.display = '';
       this.content?.$destroy();
-      this.content = new AmazingMarvinTasks({
+      this.content = new LeafRoot({
         target: this.contentEl,
         props: {
-          query: this.plugin.settings.ribbonQuery,
+          listQuery: this.plugin.settings.ribbonQuery,
+          listApi: this.plugin.amazingMarvinApi.getApiFromType(this.plugin.settings.ribbonQuery.type),
+          calendarQuery: { ...this.plugin.settings.ribbonQuery, type: 'today', title: 'Calendar' },
           getData: this.plugin.amazingMarvinApi.getData.bind(this.plugin.amazingMarvinApi),
-          api: this.plugin.amazingMarvinApi.getApiFromType(this.plugin.settings.ribbonQuery.type),
           openOrCreateDailyNote: this.plugin.fileManager.openOrCreateDailyNote.bind(this.plugin.fileManager),
         },
       });
