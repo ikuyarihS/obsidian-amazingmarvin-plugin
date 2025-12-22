@@ -14,7 +14,21 @@ For more information, please read here - https://github.com/amazingmarvin/Marvin
 ## Compatibility
 
 - Minimum Obsidian version: **1.10.3**
-- Plugin version: **0.3.2**
+- Plugin version: **1.0.1**
+
+## Ribbon leaf (List / Calendar)
+
+When the ribbon icon is enabled, the plugin adds an "Amazing Marvin" leaf on the right sidebar with:
+
+- **List** tab: the existing task list view (driven by the Ribbon list query settings)
+- **Calendar** tab: a calendar view of scheduled tasks with **Week** and **Month** modes
+
+You can choose which view opens by default:
+
+- Settings → Amazing Marvin Plugin Settings → Ribbon leaf → **Default view** (List / Calendar (Week) / Calendar (Month))
+
+
+
 
 
 ## Examples
@@ -26,7 +40,7 @@ Will render
 ![image](https://user-images.githubusercontent.com/19921765/123458235-02842400-d60f-11eb-9af0-fd9399456742.png)
 
 ## Configs
-The configs has to be put in a valid JSON formats, the plugin will actually raise errors if it cannot convert (relying on `JSON.parse`)
+Configs must be valid JSON. The plugin will raise errors if it cannot parse the block (it relies on `JSON.parse`).
 Example of a valid config:
 ```json
 {
@@ -72,7 +86,7 @@ export const DEFAULT_QUERY: Query = {
 };
 ```
 
-## Support
+- Settings → Amazing Marvin Plugin Settings → Ribbon leaf → **Default view** (List / Calendar (Week) / Calendar (Month))
 If you find this plugin valuable, please let me know! It is great to hear from people who use what I've built. If you really like this plugin and want to express that by buying me a coffee, please do!
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K352ZLD)

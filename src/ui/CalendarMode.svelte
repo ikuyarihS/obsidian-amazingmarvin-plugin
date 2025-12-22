@@ -13,11 +13,13 @@
 
   type ViewMode = 'week' | 'month';
 
+  export let defaultViewMode: ViewMode = 'week';
+
   const DOW_LETTERS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
   // Marvin API guidance: do not burst more than 1 query each 3 seconds.
   const MIN_REQUEST_SPACING_MS = 3000;
 
-  let viewMode: ViewMode = 'week';
+  let viewMode: ViewMode = defaultViewMode;
   let selectedDate = moment();
 
   let isFetching = false;

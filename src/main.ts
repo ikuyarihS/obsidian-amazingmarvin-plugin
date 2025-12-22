@@ -83,6 +83,11 @@ export default class MyPlugin extends Plugin implements AmazingMarvinPlugin {
    */
   async loadSettings(): Promise<void> {
     this.settings = Object.assign({}, DEFAULT_APP_SETTINGS, await this.loadData());
+
+    const defaultLeafView = this.settings.defaultLeafView as unknown;
+    if (defaultLeafView !== 'list' && defaultLeafView !== 'week' && defaultLeafView !== 'month') {
+      this.settings.defaultLeafView = DEFAULT_APP_SETTINGS.defaultLeafView;
+    }
   }
 
   /**
@@ -101,6 +106,7 @@ export default class MyPlugin extends Plugin implements AmazingMarvinPlugin {
       this.ribbon = this.addRibbonIcon('amazing-marvin-ribbon', 'Amazing Marvin', () => this.toggleLeafView());
     } else if (this.ribbon) {
       this.ribbon.remove();
+      this.ribbon = null;
     }
   }
 

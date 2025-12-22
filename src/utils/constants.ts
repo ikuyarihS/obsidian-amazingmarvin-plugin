@@ -17,6 +17,7 @@ export const DEFAULT_APP_SETTINGS: PluginSettings = {
   apiToken: '',
   fullAccessToken: '',
   showRibbon: true,
+  defaultLeafView: 'list',
   ribbonQuery: {
     title: '',
     type: 'due-today',

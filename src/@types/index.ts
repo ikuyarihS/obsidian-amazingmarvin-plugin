@@ -20,8 +20,11 @@ export interface PluginSettings {
   apiToken: string;
   fullAccessToken: string;
   showRibbon: boolean;
+  defaultLeafView: LeafDefaultView;
   ribbonQuery: Query;
 }
+
+export type LeafDefaultView = 'list' | 'week' | 'month';
 
 export interface Query {
   title?: string;

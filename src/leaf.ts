@@ -84,6 +84,7 @@ export class LeafView extends ItemView {
       this.content = new LeafRoot({
         target: this.contentEl,
         props: {
+          defaultLeafView: this.plugin.settings.defaultLeafView,
           listQuery: this.plugin.settings.ribbonQuery,
           listApi: this.plugin.amazingMarvinApi.getApiFromType(this.plugin.settings.ribbonQuery.type),
           calendarQuery: { ...this.plugin.settings.ribbonQuery, type: 'today', title: 'Calendar' },

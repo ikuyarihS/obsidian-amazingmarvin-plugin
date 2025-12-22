@@ -1,8 +1,10 @@
 <script lang="ts">
   import type { Moment } from 'moment';
-  import type { Query } from '../@types';
+  import type { LeafDefaultView, Query } from '../@types';
   import AmazingMarvinTasks from './AmazingMarvinTasks.svelte';
   import CalendarMode from './CalendarMode.svelte';
+
+  export let defaultLeafView: LeafDefaultView = 'list';
 
   export let listQuery: Query;
   export let listApi: string;
@@ -12,7 +14,10 @@
   export let openOrCreateDailyNote: (date: Moment, query: Query, api: string) => Promise<void>;
 
   type Tab = 'list' | 'calendar';
-  let tab: Tab = 'list';
+  const initialTab: Tab = defaultLeafView === 'list' ? 'list' : 'calendar';
+  const initialCalendarMode = defaultLeafView === 'month' ? 'month' : 'week';
+
+  let tab: Tab = initialTab;
 </script>
 
 <div class="amazing-marvin-leaf-root">
@@ -28,6 +33,6 @@
   {#if tab === 'list'}
     <AmazingMarvinTasks query={listQuery} api={listApi} {getData} {openOrCreateDailyNote} />
   {:else}
-    <CalendarMode query={calendarQuery} {getData} {openOrCreateDailyNote} />
+    <CalendarMode query={calendarQuery} defaultViewMode={initialCalendarMode} {getData} {openOrCreateDailyNote} />
   {/if}
 </div>
