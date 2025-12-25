@@ -90,7 +90,7 @@ export default class FileManager {
   async openOrCreateDailyNote(date: any, query: Query, api: string): Promise<void> {
     const { workspace } = this.plugin.app;
     dailyNotes.reindex();
-    const existingFile = (getDailyNote(date, get(dailyNotes) as any) as unknown) as TFile | undefined;
+    const existingFile = getDailyNote(date, get(dailyNotes) as any) as unknown as TFile | undefined;
     if (!existingFile) {
       // File doesn't exist
       await this.tryToCreateDailyNote(date, async (dailyNote: TFile) => {
@@ -98,7 +98,7 @@ export default class FileManager {
         await this.addToDailyNote(dailyNote, query, api);
       });
     } else {
-            const leaf = workspace.getUnpinnedLeaf();
+      const leaf = workspace.getUnpinnedLeaf();
       await leaf.openFile(existingFile, { active: true });
       activeFile.setFile(existingFile);
       await this.addToDailyNote(existingFile, query, api);

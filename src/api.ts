@@ -78,8 +78,15 @@ class AmazingMarvinApi {
     if (!response.ok) throw new Error('wrong apiToken or api url');
     try {
       // Try to parse response as JSON
-      const debugData = await response.clone().json().catch(() => null as any);
-      console.debug(`[AmazingMarvinApi] GET ${api} => ok (preview: ${JSON.stringify(debugData ? (Array.isArray(debugData) ? debugData?.length : 'object') : 'not json')})`);
+      const debugData = await response
+        .clone()
+        .json()
+        .catch(() => null as any);
+      console.debug(
+        `[AmazingMarvinApi] GET ${api} => ok (preview: ${JSON.stringify(
+          debugData ? (Array.isArray(debugData) ? debugData?.length : 'object') : 'not json'
+        )})`
+      );
     } catch (e) {
       /* ignore debug logging failures */
     }
@@ -228,9 +235,24 @@ class AmazingMarvinApi {
           const sectionInfo = (ctx as any).getSectionInfo?.(node) as any;
           const cursor = editor?.getCursor?.();
           // Find numeric start/end lines if available
-          const startLine = sectionInfo?.lineStart ?? sectionInfo?.firstLine ?? sectionInfo?.from?.line ?? sectionInfo?.start?.line ?? sectionInfo?.start;
-          const endLine = sectionInfo?.lineEnd ?? sectionInfo?.lastLine ?? sectionInfo?.to?.line ?? sectionInfo?.end?.line ?? sectionInfo?.end;
-          if (typeof startLine === 'number' && typeof endLine === 'number' && cursor && typeof cursor.line === 'number') {
+          const startLine =
+            sectionInfo?.lineStart ??
+            sectionInfo?.firstLine ??
+            sectionInfo?.from?.line ??
+            sectionInfo?.start?.line ??
+            sectionInfo?.start;
+          const endLine =
+            sectionInfo?.lineEnd ??
+            sectionInfo?.lastLine ??
+            sectionInfo?.to?.line ??
+            sectionInfo?.end?.line ??
+            sectionInfo?.end;
+          if (
+            typeof startLine === 'number' &&
+            typeof endLine === 'number' &&
+            cursor &&
+            typeof cursor.line === 'number'
+          ) {
             // Only render if the cursor is NOT inside the code block
             shouldRender = !(cursor.line >= startLine && cursor.line <= endLine);
           } else {

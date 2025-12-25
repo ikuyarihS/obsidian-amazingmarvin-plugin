@@ -26,15 +26,13 @@
     <li
       class="amazing-marvin-list-item"
       in:fly={{ x: 100, delay: 100 * (baseDelay + index), duration: query.isAnimated ? 450 : 0, easing: quintOut }}
-      out:fly={{ x: -100, delay: 100 * (baseDelay + index), duration: query.isAnimated ? 450 : 0, easing: quintIn }}
-    >
+      out:fly={{ x: -100, delay: 100 * (baseDelay + index), duration: query.isAnimated ? 450 : 0, easing: quintIn }}>
       <div class="amazing-marvin-title-container">
         {#if item.type}
           <Icon
             class="amazing-marvin-title-icon"
             data={ICONS[item.type]}
-            style="fill: {item.color || 'var(--text-normal)'}"
-          />
+            style="fill: {item.color || 'var(--text-normal)'}" />
         {/if}
         <div class="amazing-marvin-title" style="color: {(query.colorTitle && item.color) || undefined}">
           {@html convertHyperlinks(item.title).outerHTML}
@@ -44,8 +42,7 @@
             <div
               class="amazing-marvin-label"
               style="color: {labels[labelId].color}"
-              transition:fade={{ delay: 100 * (baseDelay + index + labelIndex + 1) }}
-            >
+              transition:fade={{ delay: 100 * (baseDelay + index + labelIndex + 1) }}>
               {labels[labelId].title}
             </div>
           {/each}

@@ -61,7 +61,9 @@ export default class SettingTab extends PluginSettingTab {
           this.plugin.showRibbon(isShowRibbon);
           this.isRibbonSettingChanged = true;
 
-          isShowRibbon ? (ribbonQuerySetting.settingEl.style.display = '') : (ribbonQuerySetting.settingEl.style.display = 'none');
+          isShowRibbon
+            ? (ribbonQuerySetting.settingEl.style.display = '')
+            : (ribbonQuerySetting.settingEl.style.display = 'none');
           defaultLeafViewSetting.setDisabled(!isShowRibbon);
           await this.plugin.saveSettings();
         });
@@ -87,8 +89,12 @@ export default class SettingTab extends PluginSettingTab {
       });
     defaultLeafViewSetting.setDisabled(!this.plugin.settings.showRibbon);
 
-    const ribbonQuerySetting = new Setting(containerEl).setName('Ribbon list query').setDesc('Controls the task list tab in the ribbon leaf.');
-    this.plugin.settings.showRibbon ? (ribbonQuerySetting.settingEl.style.display = '') : (ribbonQuerySetting.settingEl.style.display = 'none');
+    const ribbonQuerySetting = new Setting(containerEl)
+      .setName('Ribbon list query')
+      .setDesc('Controls the task list tab in the ribbon leaf.');
+    this.plugin.settings.showRibbon
+      ? (ribbonQuerySetting.settingEl.style.display = '')
+      : (ribbonQuerySetting.settingEl.style.display = 'none');
 
     ribbonQuerySetting.controlEl.style.display = 'inline';
     new Setting(ribbonQuerySetting.controlEl.createDiv('amazing-marvin-ribbon-query-setting-dropdown'))
@@ -123,16 +129,14 @@ export default class SettingTab extends PluginSettingTab {
       parent.style.color = this.plugin.settings.showRibbon ? undefined : 'gray';
       parent.style.display = 'block';
 
-      new Setting(parent)
-        .setName(ribbonToggleLabels[key] ?? key)
-        .addToggle(toggle => {
-          toggle.setDisabled(!this.plugin.settings.showRibbon);
-          toggle.setValue(value).onChange(async newValue => {
-            this.plugin.settings.ribbonQuery = { ...this.plugin.settings.ribbonQuery, [key]: newValue };
-            this.isRibbonSettingChanged = true;
-            await this.plugin.saveSettings();
-          });
+      new Setting(parent).setName(ribbonToggleLabels[key] ?? key).addToggle(toggle => {
+        toggle.setDisabled(!this.plugin.settings.showRibbon);
+        toggle.setValue(value).onChange(async newValue => {
+          this.plugin.settings.ribbonQuery = { ...this.plugin.settings.ribbonQuery, [key]: newValue };
+          this.isRibbonSettingChanged = true;
+          await this.plugin.saveSettings();
         });
+      });
     });
 
     new SettingFooter({ target: containerEl });

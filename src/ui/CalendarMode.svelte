@@ -166,8 +166,7 @@
         class:is-active={viewMode === 'week'}
         on:click={() => {
           viewMode = 'week';
-        }}
-      >
+        }}>
         Week
       </button>
       <button
@@ -175,8 +174,7 @@
         class:is-active={viewMode === 'month'}
         on:click={() => {
           viewMode = 'month';
-        }}
-      >
+        }}>
         Month
       </button>
     </div>
@@ -190,8 +188,7 @@
           class:is-selected={day.isSame(selectedDate, 'day')}
           class:is-today={day.isSame(moment(), 'day')}
           on:click={() => selectDate(day)}
-          aria-label={day.format('YYYY-MM-DD')}
-        >
+          aria-label={day.format('YYYY-MM-DD')}>
           <div class="dow">{DOW_LETTERS[i]}</div>
           <div class="dom">{day.date()}</div>
         </button>
@@ -212,8 +209,7 @@
             class:is-selected={day.isSame(selectedDate, 'day')}
             class:is-today={day.isSame(moment(), 'day')}
             on:click={() => selectDate(day)}
-            aria-label={day.format('YYYY-MM-DD')}
-          >
+            aria-label={day.format('YYYY-MM-DD')}>
             <div class="dom">{day.date()}</div>
           </button>
         {/each}
@@ -232,8 +228,7 @@
         <button
           class="button daily-note"
           on:click={() => handleDailyNote()}
-          disabled={isLoading || isAddingToDailyNote}
-        >
+          disabled={isLoading || isAddingToDailyNote}>
           <Icon class="icon daily-note" data={isAddingToDailyNote ? faSyncAlt : faFile} spin={isAddingToDailyNote} />
           Daily note
         </button>

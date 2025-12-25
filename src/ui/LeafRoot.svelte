@@ -23,11 +23,9 @@
 <div class="amazing-marvin-leaf-root">
   <div class="amazing-marvin-leaf-tabs">
     <button class="amazing-marvin-leaf-tab" class:is-active={tab === 'list'} on:click={() => (tab = 'list')}
-      >List</button
-    >
+      >List</button>
     <button class="amazing-marvin-leaf-tab" class:is-active={tab === 'calendar'} on:click={() => (tab = 'calendar')}
-      >Calendar</button
-    >
+      >Calendar</button>
   </div>
 
   {#if tab === 'list'}
