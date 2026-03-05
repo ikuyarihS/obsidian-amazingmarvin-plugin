@@ -1,6 +1,6 @@
 [![Release](https://github.com/ikuyarihS/obsidian-amazingmarvin-plugin/actions/workflows/release.yaml/badge.svg)](https://github.com/ikuyarihS/obsidian-amazingmarvin-plugin/actions/workflows/release.yaml)
-[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ikuyarihS/obsidian-amazingmarvin-plugin?style=flat&sort=semver)](https://github.com/ikuyarihS/obsidian-amazingmarvin-plugin/releases/latest)
-![GitHub All Releases](https://img.shields.io/github/downloads/ikuyarihS/obsidian-amazingmarvin-plugin/total?style=flat)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/ikuyarihS/obsidian-amazingmarvin-plugin?style=flat&label=release)](https://github.com/ikuyarihS/obsidian-amazingmarvin-plugin/releases/latest)
+[![GitHub All Releases](https://img.shields.io/github/downloads/ikuyarihS/obsidian-amazingmarvin-plugin/total?style=flat&cacheSeconds=3600)](https://github.com/ikuyarihS/obsidian-amazingmarvin-plugin/releases)
 
 This is a plugin for Obsidian (https://obsidian.md).
 
@@ -92,3 +92,4 @@ If you find this plugin valuable, please let me know! It is great to hear from p
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K352ZLD)
 
 _Please don't ever feel obligated!_
+
